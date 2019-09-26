@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+        <Switch
+            android:id="@+id/vsSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
+            android:layout_marginBottom="16dp"
+            android:text="vs Computer"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/checker00"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/checker52"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="p"
+            android:tag="white"
+            app:layout_constraintBottom_toTopOf="@+id/checker60"
+            app:layout_constraintEnd_toStartOf="@+id/checker5"
+            app:layout_constraintStart_toEndOf="@+id/checker3"
+            app:layout_constraintTop_toBottomOf="@+id/checker44"
+            app:srcCompat="@drawable/pawn_white" />
+
+        <ImageButton
+            android:id="@+id/checker46"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker54"
+            app:layout_constraintEnd_toStartOf="@+id/checker7"
+            app:layout_constraintStart_toEndOf="@+id/checker5"
+            app:layout_constraintTop_toBottomOf="@+id/checker38" />
+
+        <ImageButton
+            android:id="@+id/checker45"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker53"
+            app:layout_constraintEnd_toStartOf="@+id/checker6"
+            app:layout_constraintStart_toEndOf="@+id/checker4"
+            app:layout_constraintTop_toBottomOf="@+id/checker37" />
+
+        <ImageButton
+            android:id="@+id/checker29"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker37"
+            app:layout_constraintEnd_toStartOf="@+id/checker6"
+            app:layout_constraintStart_toEndOf="@+id/checker4"
+            app:layout_constraintTop_toBottomOf="@+id/checker21" />
+
+        <ImageButton
+            android:id="@+id/checker35"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker43"
+            app:layout_constraintEnd_toStartOf="@+id/checker4"
+            app:layout_constraintStart_toEndOf="@+id/checker2"
+            app:layout_constraintTop_toBottomOf="@+id/checker27" />
+
+        <ImageButton
+            android:id="@+id/checker54"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="p"
+            android:tag="white"
+            app:layout_constraintBottom_toTopOf="@+id/checker62"
+            app:layout_constraintEnd_toStartOf="@+id/checker7"
+            app:layout_constraintStart_toEndOf="@+id/checker5"
+            app:layout_constraintTop_toBottomOf="@+id/checker46"
+            app:srcCompat="@drawable/pawn_white" />
+
+        <ImageButton
+            android:id="@+id/checker42"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker50"
+            app:layout_constraintEnd_toStartOf="@+id/checker3"
+            app:layout_constraintStart_toEndOf="@+id/checker1"
+            app:layout_constraintTop_toBottomOf="@+id/checker34" />
+
+        <ImageButton
+            android:id="@+id/checker48"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:background="#FDE0CE"
+            android:contentDescription="p"
+            android:tag="white"
+            app:layout_constraintBottom_toTopOf="@+id/checker56"
+            app:layout_constraintEnd_toStartOf="@+id/checker1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checker40"
+            app:srcCompat="@drawable/pawn_white" />
+
+        <ImageButton
+            android:id="@+id/checker33"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker41"
+            app:layout_constraintEnd_toStartOf="@+id/checker2"
+            app:layout_constraintStart_toEndOf="@+id/checker0"
+            app:layout_constraintTop_toBottomOf="@+id/checker25" />
+
+        <ImageButton
+            android:id="@+id/checker57"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="k"
+            android:tag="white"
+            app:layout_constraintEnd_toStartOf="@+id/checker2"
+            app:layout_constraintStart_toEndOf="@+id/checker0"
+            app:layout_constraintTop_toBottomOf="@+id/checker49"
+            app:srcCompat="@drawable/knight_white" />
+
+        <ImageButton
+            android:id="@+id/checker55"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            android:background="#A22E01"
+            android:contentDescription="p"
+            android:tag="white"
+            app:layout_constraintBottom_toTopOf="@+id/checker63"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checker6"
+            app:layout_constraintTop_toBottomOf="@+id/checker47"
+            app:srcCompat="@drawable/pawn_white" />
+
+        <ImageButton
+            android:id="@+id/checker59"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="q"
+            android:tag="white"
+            app:layout_constraintEnd_toStartOf="@+id/checker4"
+            app:layout_constraintStart_toEndOf="@+id/checker2"
+            app:layout_constraintTop_toBottomOf="@+id/checker51"
+            app:srcCompat="@drawable/queen_white" />
+
+        <ImageButton
+            android:id="@+id/checker40"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker48"
+            app:layout_constraintEnd_toStartOf="@+id/checker1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checker32" />
+
+        <ImageButton
+            android:id="@+id/checker44"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker52"
+            app:layout_constraintEnd_toStartOf="@+id/checker5"
+            app:layout_constraintStart_toEndOf="@+id/checker3"
+            app:layout_constraintTop_toBottomOf="@+id/checker36" />
+
+        <ImageButton
+            android:id="@+id/checker53"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="p"
+            android:tag="white"
+            app:layout_constraintBottom_toTopOf="@+id/checker61"
+            app:layout_constraintEnd_toStartOf="@+id/checker6"
+            app:layout_constraintStart_toEndOf="@+id/checker4"
+            app:layout_constraintTop_toBottomOf="@+id/checker45"
+            app:srcCompat="@drawable/pawn_white" />
+
+        <ImageButton
+            android:id="@+id/checker43"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker51"
+            app:layout_constraintEnd_toStartOf="@+id/checker4"
+            app:layout_constraintStart_toEndOf="@+id/checker2"
+            app:layout_constraintTop_toBottomOf="@+id/checker35" />
+
+        <ImageButton
+            android:id="@+id/checker34"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker42"
+            app:layout_constraintEnd_toStartOf="@+id/checker3"
+            app:layout_constraintStart_toEndOf="@+id/checker1"
+            app:layout_constraintTop_toBottomOf="@+id/checker26" />
+
+        <ImageButton
+            android:id="@+id/checker56"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:background="#A22E01"
+            android:contentDescription="r0"
+            android:tag="white"
+            app:layout_constraintEnd_toStartOf="@+id/checker1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checker48"
+            app:srcCompat="@drawable/rock_white" />
+
+        <ImageButton
+            android:id="@+id/checker39"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker47"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checker6"
+            app:layout_constraintTop_toBottomOf="@+id/checker31" />
+
+        <ImageButton
+            android:id="@+id/checker61"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="b"
+            android:tag="white"
+            app:layout_constraintEnd_toStartOf="@+id/checker6"
+            app:layout_constraintStart_toEndOf="@+id/checker4"
+            app:layout_constraintTop_toBottomOf="@+id/checker53"
+            app:srcCompat="@drawable/bishop_white" />
+
+        <ImageButton
+            android:id="@+id/checker60"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="K0"
+            android:tag="white"
+            app:layout_constraintEnd_toStartOf="@+id/checker5"
+            app:layout_constraintStart_toEndOf="@+id/checker3"
+            app:layout_constraintTop_toBottomOf="@+id/checker52"
+            app:srcCompat="@drawable/king_white" />
+
+        <ImageButton
+            android:id="@+id/checker58"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="b"
+            android:tag="white"
+            app:layout_constraintEnd_toStartOf="@+id/checker3"
+            app:layout_constraintStart_toEndOf="@+id/checker1"
+            app:layout_constraintTop_toBottomOf="@+id/checker50"
+            app:srcCompat="@drawable/bishop_white" />
+
+        <ImageButton
+            android:id="@+id/checker32"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker40"
+            app:layout_constraintEnd_toStartOf="@+id/checker1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checker24" />
+
+        <ImageButton
+            android:id="@+id/checker49"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="p"
+            android:tag="white"
+            app:layout_constraintBottom_toTopOf="@+id/checker57"
+            app:layout_constraintEnd_toStartOf="@+id/checker2"
+            app:layout_constraintStart_toEndOf="@+id/checker0"
+            app:layout_constraintTop_toBottomOf="@+id/checker41"
+            app:srcCompat="@drawable/pawn_white" />
+
+        <ImageButton
+            android:id="@+id/checker50"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="p"
+            android:tag="white"
+            app:layout_constraintBottom_toTopOf="@+id/checker58"
+            app:layout_constraintEnd_toStartOf="@+id/checker3"
+            app:layout_constraintStart_toEndOf="@+id/checker1"
+            app:layout_constraintTop_toBottomOf="@+id/checker42"
+            app:srcCompat="@drawable/pawn_white" />
+
+        <ImageButton
+            android:id="@+id/checker62"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="k"
+            android:tag="white"
+            app:layout_constraintEnd_toStartOf="@+id/checker7"
+            app:layout_constraintStart_toEndOf="@+id/checker5"
+            app:layout_constraintTop_toBottomOf="@+id/checker54"
+            app:srcCompat="@drawable/knight_white" />
+
+        <ImageButton
+            android:id="@+id/checker51"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="p"
+            android:tag="white"
+            app:layout_constraintBottom_toTopOf="@+id/checker59"
+            app:layout_constraintEnd_toStartOf="@+id/checker4"
+            app:layout_constraintStart_toEndOf="@+id/checker2"
+            app:layout_constraintTop_toBottomOf="@+id/checker43"
+            app:srcCompat="@drawable/pawn_white" />
+
+        <ImageButton
+            android:id="@+id/checker47"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker55"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checker14"
+            app:layout_constraintTop_toBottomOf="@+id/checker39" />
+
+        <ImageButton
+            android:id="@+id/checker36"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker44"
+            app:layout_constraintEnd_toStartOf="@+id/checker5"
+            app:layout_constraintStart_toEndOf="@+id/checker3"
+            app:layout_constraintTop_toBottomOf="@+id/checker28" />
+
+        <ImageButton
+            android:id="@+id/checker37"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker45"
+            app:layout_constraintEnd_toStartOf="@+id/checker6"
+            app:layout_constraintStart_toEndOf="@+id/checker4"
+            app:layout_constraintTop_toBottomOf="@+id/checker29" />
+
+        <ImageButton
+            android:id="@+id/checker38"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker46"
+            app:layout_constraintEnd_toStartOf="@+id/checker7"
+            app:layout_constraintStart_toEndOf="@+id/checker5"
+            app:layout_constraintTop_toBottomOf="@+id/checker30" />
+
+        <ImageButton
+            android:id="@+id/checker63"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            android:background="#FDE0CE"
+            android:contentDescription="r0"
+            android:tag="white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checker14"
+            app:layout_constraintTop_toBottomOf="@+id/checker55"
+            app:srcCompat="@drawable/rock_white" />
+
+        <ImageButton
+            android:id="@+id/checker41"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker49"
+            app:layout_constraintEnd_toStartOf="@+id/checker2"
+            app:layout_constraintStart_toEndOf="@+id/checker0"
+            app:layout_constraintTop_toBottomOf="@+id/checker33" />
+
+        <ImageButton
+            android:id="@+id/checker27"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker35"
+            app:layout_constraintEnd_toStartOf="@+id/checker4"
+            app:layout_constraintStart_toEndOf="@+id/checker2"
+            app:layout_constraintTop_toBottomOf="@+id/checker19" />
+
+        <ImageButton
+            android:id="@+id/checker30"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker38"
+            app:layout_constraintEnd_toStartOf="@+id/checker7"
+            app:layout_constraintStart_toEndOf="@+id/checker5"
+            app:layout_constraintTop_toBottomOf="@+id/checker22" />
+
+        <ImageButton
+            android:id="@+id/checker23"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker31"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checker6"
+            app:layout_constraintTop_toBottomOf="@+id/checker15" />
+
+        <ImageButton
+            android:id="@+id/checker19"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker27"
+            app:layout_constraintEnd_toStartOf="@+id/checker4"
+            app:layout_constraintStart_toEndOf="@+id/checker2"
+            app:layout_constraintTop_toBottomOf="@+id/checker11" />
+
+        <ImageButton
+            android:id="@+id/checker26"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker34"
+            app:layout_constraintEnd_toStartOf="@+id/checker3"
+            app:layout_constraintStart_toEndOf="@+id/checker1"
+            app:layout_constraintTop_toBottomOf="@+id/checker18" />
+
+        <ImageButton
+            android:id="@+id/checker17"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker25"
+            app:layout_constraintEnd_toStartOf="@+id/checker2"
+            app:layout_constraintStart_toEndOf="@+id/checker0"
+            app:layout_constraintTop_toBottomOf="@+id/checker9" />
+
+        <ImageButton
+            android:id="@+id/checker16"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker24"
+            app:layout_constraintEnd_toStartOf="@+id/checker1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checker8" />
+
+        <ImageButton
+            android:id="@+id/checker25"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker33"
+            app:layout_constraintEnd_toStartOf="@+id/checker2"
+            app:layout_constraintStart_toEndOf="@+id/checker0"
+            app:layout_constraintTop_toBottomOf="@+id/checker17" />
+
+        <ImageButton
+            android:id="@+id/checker24"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker32"
+            app:layout_constraintEnd_toStartOf="@+id/checker1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checker16" />
+
+        <ImageButton
+            android:id="@+id/checker28"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker36"
+            app:layout_constraintEnd_toStartOf="@+id/checker5"
+            app:layout_constraintStart_toEndOf="@+id/checker3"
+            app:layout_constraintTop_toBottomOf="@+id/checker20" />
+
+        <ImageButton
+            android:id="@+id/checker31"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker39"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checker14"
+            app:layout_constraintTop_toBottomOf="@+id/checker23" />
+
+        <ImageButton
+            android:id="@+id/checker20"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker28"
+            app:layout_constraintEnd_toStartOf="@+id/checker5"
+            app:layout_constraintStart_toEndOf="@+id/checker3"
+            app:layout_constraintTop_toBottomOf="@+id/checker12" />
+
+        <ImageButton
+            android:id="@+id/checker21"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker29"
+            app:layout_constraintEnd_toStartOf="@+id/checker6"
+            app:layout_constraintStart_toEndOf="@+id/checker4"
+            app:layout_constraintTop_toBottomOf="@+id/checker13" />
+
+        <ImageButton
+            android:id="@+id/checker22"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker30"
+            app:layout_constraintEnd_toStartOf="@+id/checker7"
+            app:layout_constraintStart_toEndOf="@+id/checker5"
+            app:layout_constraintTop_toBottomOf="@+id/checker14" />
+
+        <ImageButton
+            android:id="@+id/checker18"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:src="@drawable/empty"
+            app:layout_constraintBottom_toTopOf="@+id/checker26"
+            app:layout_constraintEnd_toStartOf="@+id/checker3"
+            app:layout_constraintStart_toEndOf="@+id/checker1"
+            app:layout_constraintTop_toBottomOf="@+id/checker10" />
+
+        <ImageButton
+            android:id="@+id/checker11"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="p"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker19"
+            app:layout_constraintEnd_toStartOf="@+id/checker4"
+            app:layout_constraintStart_toEndOf="@+id/checker2"
+            app:layout_constraintTop_toBottomOf="@+id/checker3"
+            app:srcCompat="@drawable/pawn_black" />
+
+        <ImageButton
+            android:id="@+id/checker14"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="p"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker22"
+            app:layout_constraintEnd_toStartOf="@+id/checker7"
+            app:layout_constraintStart_toEndOf="@+id/checker5"
+            app:layout_constraintTop_toBottomOf="@+id/checker6"
+            app:srcCompat="@drawable/pawn_black" />
+
+        <ImageButton
+            android:id="@+id/checker13"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="p"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker21"
+            app:layout_constraintEnd_toStartOf="@+id/checker6"
+            app:layout_constraintStart_toEndOf="@+id/checker4"
+            app:layout_constraintTop_toBottomOf="@+id/checker5"
+            app:srcCompat="@drawable/pawn_black" />
+
+        <ImageButton
+            android:id="@+id/checker8"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:background="#A22E01"
+            android:contentDescription="p"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker16"
+            app:layout_constraintEnd_toStartOf="@+id/checker1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checker0"
+            app:srcCompat="@drawable/pawn_black" />
+
+        <ImageButton
+            android:id="@+id/checker12"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="p"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker20"
+            app:layout_constraintEnd_toStartOf="@+id/checker5"
+            app:layout_constraintStart_toEndOf="@+id/checker3"
+            app:layout_constraintTop_toBottomOf="@+id/checker4"
+            app:srcCompat="@drawable/pawn_black" />
+
+        <ImageButton
+            android:id="@+id/checker10"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#A22E01"
+            android:contentDescription="p"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker18"
+            app:layout_constraintEnd_toStartOf="@+id/checker3"
+            app:layout_constraintStart_toEndOf="@+id/checker1"
+            app:layout_constraintTop_toBottomOf="@+id/checker2"
+            app:srcCompat="@drawable/pawn_black" />
+
+        <ImageButton
+            android:id="@+id/checker15"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            android:background="#FDE0CE"
+            android:contentDescription="p"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker23"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checker14"
+            app:layout_constraintTop_toBottomOf="@+id/checker7"
+            app:srcCompat="@drawable/pawn_black" />
+
+        <ImageButton
+            android:id="@+id/checker9"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#FDE0CE"
+            android:contentDescription="p"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker17"
+            app:layout_constraintEnd_toStartOf="@+id/checker2"
+            app:layout_constraintStart_toEndOf="@+id/checker0"
+            app:layout_constraintTop_toBottomOf="@+id/checker1"
+            app:srcCompat="@drawable/pawn_black" />
+
+        <ImageButton
+            android:id="@+id/checker5"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="24dp"
+            android:background="#A22E01"
+            android:contentDescription="b"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker13"
+            app:layout_constraintEnd_toStartOf="@+id/checker6"
+            app:layout_constraintStart_toEndOf="@+id/checker4"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bishop_black" />
+
+        <ImageButton
+            android:id="@+id/checker7"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:background="#A22E01"
+            android:contentDescription="r0"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker15"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checker6"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/rock_black" />
+
+        <ImageButton
+            android:id="@+id/checker6"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="24dp"
+            android:background="#FDE0CE"
+            android:contentDescription="k"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker14"
+            app:layout_constraintEnd_toStartOf="@+id/checker7"
+            app:layout_constraintStart_toEndOf="@+id/checker5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/knight_black" />
+
+        <ImageButton
+            android:id="@+id/checker4"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="24dp"
+            android:background="#FDE0CE"
+            android:contentDescription="K0"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker12"
+            app:layout_constraintEnd_toStartOf="@+id/checker5"
+            app:layout_constraintStart_toEndOf="@+id/checker3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/king_black" />
+
+        <ImageButton
+            android:id="@+id/checker2"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="24dp"
+            android:background="#FDE0CE"
+            android:contentDescription="b"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker10"
+            app:layout_constraintEnd_toStartOf="@+id/checker3"
+            app:layout_constraintStart_toEndOf="@+id/checker1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bishop_black" />
+
+        <ImageButton
+            android:id="@+id/checker3"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="24dp"
+            android:background="#A22E01"
+            android:contentDescription="q"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker11"
+            app:layout_constraintEnd_toStartOf="@+id/checker4"
+            app:layout_constraintStart_toEndOf="@+id/checker2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/queen_black" />
+
+        <ImageButton
+            android:id="@+id/checker1"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="24dp"
+            android:background="#A22E01"
+            android:contentDescription="k"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker9"
+            app:layout_constraintEnd_toStartOf="@+id/checker2"
+            app:layout_constraintStart_toEndOf="@+id/checker0"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/knight_black" />
+
+        <ImageButton
+            android:id="@+id/checker0"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:background="#FDE0CE"
+            android:contentDescription="r0"
+            android:tag="black"
+            app:layout_constraintBottom_toTopOf="@+id/checker8"
+            app:layout_constraintEnd_toStartOf="@+id/checker1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/rock_black" />
+
+        <Button
+            android:id="@+id/button_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="160dp"
+            android:layout_marginEnd="160dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#CCCCD5"
+            android:text="New Game"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="white moves first"
+            android:textColor="#BB5A5A"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/button_new"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textBug"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="gdfaga"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
