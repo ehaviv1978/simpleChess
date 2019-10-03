@@ -13,6 +13,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Handler
 import kotlinx.coroutines.*
+import android.widget.CompoundButton
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,7 +26,8 @@ class MainActivity : AppCompatActivity() {
         data class Cordinate(val row: Int, val column: Int)
         data class BestMove(var first: ImageButton, var last: ImageButton, var score: Int, var checkmate: Boolean)
         data class CheckerPar(var tag: String, var contentDescription: String, var scrollBarSize: Int, var image: Bitmap)
-        data class TempPiece (var tag:String,var contentDescription: String)
+        data class BackPar(var index: Int, var tag: String, var contentDescription: String, var scrollBarSize: Int, var image: Bitmap)
+        data class TempPiece (var tag:String,var contentDescription: String,var scrollBarSize: Int,var K0:Boolean)
         val handler =Handler()
 
         val board1d = arrayOf(checker0,checker1,checker2, checker3,checker4,checker5, checker6, checker7,
@@ -43,18 +47,26 @@ class MainActivity : AppCompatActivity() {
             checker53,checker54,checker55,checker56,checker57, checker58,checker59,checker60,checker61,
             checker62,checker63)
         boardRandom.shuffle()
+        var compLvl =2
         var board2d = arrayOf<Array<ImageButton>>()
         var handPice = checker30.drawable.toBitmap()
         val noPice = checker30.drawable.toBitmap()
         var tempChecker = checker00
         var turn = "white"
-        var openining = 0
+        var openining = 1
+        var totalScore=0
         //  val mp_error = MediaPlayer.create(this, R.raw.error)
         //  val mp_move = MediaPlayer.create(this, R.raw.click)
         var n = 0
         var counter =0
+        var back1=BackPar(99,"","",4,checker30.drawable.toBitmap())
+        var back2=BackPar(99,"","",4,checker30.drawable.toBitmap())
+        var back3=BackPar(99,"","",4,checker30.drawable.toBitmap())
+        var back4=BackPar(99,"","",4,checker30.drawable.toBitmap())
 
+        button_back.isEnabled=false
         vsSwitch.isChecked= true
+        sound_switch.isEnabled=false
 
         checker00.tag =""
         checker00.contentDescription=""
@@ -143,8 +155,7 @@ class MainActivity : AppCompatActivity() {
             return Cordinate(7,row7.indexOf(item))
         }
 
-
-        fun specialMove(oldChecker:ImageButton,checker:ImageButton,final:Boolean){
+        fun specialMove(oldChecker:ImageButton,checker:ImageButton){
             if (checker.contentDescription=="p"){
                 if (checker in row3 && oldChecker in row1){
                     row2[row3.indexOf(checker)].scrollBarSize=2
@@ -162,9 +173,13 @@ class MainActivity : AppCompatActivity() {
                     row4[row5.indexOf(checker)].contentDescription=""
                     row4[row5.indexOf(checker)].setImageResource(R.drawable.empty)
                 }
+                else if (checker in row0 || checker in row7){
+                    checker.contentDescription = "q"
+                    checker.scrollBarSize = 1
+                }
             }
             else if (checker.contentDescription =="K0") {
-                if (final){checker.contentDescription="K"}
+                checker.contentDescription="K"
                 if (checker in column6){
                     board1d[board1d.indexOf(checker)-1].tag=board1d[board1d.indexOf(checker)+1].tag
                     board1d[board1d.indexOf(checker)-1].contentDescription="r"
@@ -186,27 +201,8 @@ class MainActivity : AppCompatActivity() {
                     board1d[board1d.indexOf(checker)-2].setImageResource(R.drawable.empty)
                 }
             }
-            else if (checker.contentDescription =="r0" && final){checker.contentDescription="r"}
+            //else if (checker.contentDescription =="r0"){checker.contentDescription="r"}
         }
-
-        fun pawnToQueen():Boolean{
-            for (item in row0){
-                if (item.contentDescription == "p") {
-                    item.contentDescription = "q"
-                    item.scrollBarSize = 1
-                    return true
-                }
-            }
-            for (item in row7){
-                if (item.contentDescription == "p") {
-                    item.contentDescription = "q"
-                    item.scrollBarSize = 1
-                    return true
-                }
-            }
-            return false
-        }
-
 
         // checks if a move is valid and return true or false
         fun isValidMove(oldChecker:ImageButton, newChecker:ImageButton):Boolean{
@@ -221,8 +217,6 @@ class MainActivity : AppCompatActivity() {
             var opositTurn = "str"
             if (oldChecker.tag == "white"){opositTurn="black"} else {opositTurn ="white"}
             if (oldChecker.tag == "white") {num = -1} else {num = 1}
-
-            counter++
 
             // checks if specific square is under attack
             fun isThretened(checker: ImageButton, color: String):Boolean{
@@ -438,8 +432,6 @@ class MainActivity : AppCompatActivity() {
             val columnOld = cordinate(checker).column
             if (color == "white"){opositeColor="black"} else {opositeColor ="white"}
             var possibleMoves = ArrayList<ImageButton>()
-
-            counter++
 
             if (checker.contentDescription == "k"){
                 try {
@@ -797,30 +789,22 @@ class MainActivity : AppCompatActivity() {
                     }else {break}
                 }
             }
-            counter +=possibleMoves.size
             return possibleMoves
         }
 
 
         fun resetMove(item:ImageButton, item1:ImageButton){
-            if (item.contentDescription == "p" && item1 in row3 && item in row1){
+            if (item1.contentDescription == "p" && item1 in row3 && item in row1){
                 row2[row3.indexOf(item1)].scrollBarSize=4
             }
-            else if (item.contentDescription == "p" && item1 in row4 && item in row6){
+            else if (item1.contentDescription == "p" && item1 in row4 && item in row6){
                 row5[row4.indexOf(item1)].scrollBarSize=4
             }
-            else if(item1.scrollBarSize==1&& item.scrollBarSize==1 &&item.contentDescription=="q"&&
-                item in row1 && item.tag=="white"){
-                item.scrollBarSize=4
+            else if(item1.scrollBarSize==1&&item1.contentDescription=="q"){
                 item1.scrollBarSize=4
-                item.contentDescription="p"
+                item1.contentDescription="p"
             }
-            else if(item1.scrollBarSize==1&& item.scrollBarSize==1 && item.contentDescription=="q"&&
-                item in row6 && item.tag=="black"){
-                item.scrollBarSize=4
-                item1.scrollBarSize=4
-                item.contentDescription="p"
-            }
+
             else if (item1.scrollBarSize == 2 && item.contentDescription=="p"&& item.tag=="white") {
                 board1d[board1d.indexOf(item1) + 8].tag = "black"
                 board1d[board1d.indexOf(item1) + 8].contentDescription = "p"
@@ -831,7 +815,7 @@ class MainActivity : AppCompatActivity() {
                 board1d[board1d.indexOf(item1) - 8].contentDescription = "p"
                 board1d[board1d.indexOf(item1) - 8].setImageResource(R.drawable.pawn_white)
             }
-            else if (item.contentDescription == "K0" && board1d.indexOf(item1) == 62 &&
+            else if (item1.contentDescription == "K" && board1d.indexOf(item1) == 62 &&
                 board1d.indexOf(item) == 60){
                 board1d[63].tag = "white"
                 board1d[63].contentDescription = "r0"
@@ -841,7 +825,7 @@ class MainActivity : AppCompatActivity() {
                 if (board1d[61].drawable.toBitmap()==board1d[63].drawable.toBitmap()){
                     board1d[61].setImageResource(R.drawable.empty)
                 }
-            } else if (item.contentDescription == "K0" && board1d.indexOf(item1) == 58 &&
+            } else if (item1.contentDescription == "K" && board1d.indexOf(item1) == 58 &&
                 board1d.indexOf(item) == 60) {
                 board1d[56].tag = "white"
                 board1d[56].contentDescription = "r0"
@@ -852,7 +836,7 @@ class MainActivity : AppCompatActivity() {
                     board1d[59].setImageResource(R.drawable.empty)
                 }
             }
-            else if (item.contentDescription == "K0" && board1d.indexOf(item1) == 6 &&
+            else if (item1.contentDescription == "K" && board1d.indexOf(item1) == 6 &&
                 board1d.indexOf(item) == 4) {
                 board1d[7].tag = "black"
                 board1d[7].contentDescription = "r0"
@@ -862,7 +846,7 @@ class MainActivity : AppCompatActivity() {
                 if (board1d[5].drawable.toBitmap()==board1d[7].drawable.toBitmap()){
                     board1d[5].setImageResource(R.drawable.empty)
                 }
-            } else if (item.contentDescription == "K0" && board1d.indexOf(item1) == 2 &&
+            } else if (item1.contentDescription == "K" && board1d.indexOf(item1) == 2 &&
                 board1d.indexOf(item) == 4) {
                 board1d[0].tag = "black"
                 board1d[0].contentDescription = "r0"
@@ -875,6 +859,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        fun tempMove (item: ImageButton,item1:ImageButton):TempPiece{
+            var tempPiece=TempPiece("","",4,false)
+            if (item.contentDescription=="K0"){tempPiece.K0=true}
+            tempPiece.tag = item1.tag.toString()
+            tempPiece.contentDescription = item1.contentDescription.toString()
+            tempPiece.scrollBarSize=item1.scrollBarSize
+            item1.tag = item.tag
+            item1.contentDescription = item.contentDescription
+            item1.scrollBarSize=item.scrollBarSize
+            item.tag = ""
+            item.contentDescription = ""
+            item.scrollBarSize=4
+            return tempPiece
+        }
+
+        fun backMove (item: ImageButton,item1:ImageButton,tempPiece:TempPiece){
+            if (tempPiece.K0){item1.contentDescription="K0"}
+            item.tag = item1.tag
+            item.contentDescription = item1.contentDescription
+            item.scrollBarSize=item1.scrollBarSize
+            item1.tag = tempPiece.tag
+            item1.contentDescription = tempPiece.contentDescription
+            item1.scrollBarSize=tempPiece.scrollBarSize
+        }
 
         // checks if king in specified color is under check
         fun isChecked(color :String):Boolean{
@@ -899,75 +907,28 @@ class MainActivity : AppCompatActivity() {
             return false
         }
 
-        fun tempMove (item: ImageButton,item1:ImageButton):TempPiece{
-            var tempPiece=TempPiece("","")
-            tempPiece.tag = item1.tag.toString()
-            tempPiece.contentDescription = item1.contentDescription.toString()
-            item1.tag = item.tag
-            item1.contentDescription = item.contentDescription
-            item.tag = ""
-            item.contentDescription = ""
-
-            return tempPiece
-        }
-
-        fun backMove (item: ImageButton,item1:ImageButton,tempPiece:TempPiece){
-            item.tag = item1.tag
-            item.contentDescription = item1.contentDescription
-            item1.tag = tempPiece.tag
-            item1.contentDescription = tempPiece.contentDescription
-            tempPiece.tag = ""
-            tempPiece.contentDescription = ""
-        }
 
         fun isCheckmate(color: String):Boolean{
-
             for (item in board1d){
                 if (item.tag == color){
                     for (item1 in possibleMoves(item)){
                         var tempPiece = tempMove(item,item1)
 
-                        specialMove(item,item1,false)
-                        if(pawnToQueen()){item.scrollBarSize=1}
+                        specialMove(item,item1)
 
                         //check if move is ligal
                         if (!isChecked(color)){
-                            backMove(item,item1,tempPiece)
                             resetMove(item, item1)
+                            backMove(item,item1,tempPiece)
                             return false
                         }
 
-                        backMove(item,item1,tempPiece)
                         resetMove(item, item1)
+                        backMove(item,item1,tempPiece)
                     }
                 }
             }
             return true
-        }
-
-
-        // calculate board score
-        fun boardScore(): Int{
-            var score =0
-            for (item in board1d){
-                if (item.tag == "black"){
-                    if (item.contentDescription=="K" ||item.contentDescription=="K0"){score += 10000}
-                    else if (item.contentDescription=="r" ||item.contentDescription=="r0"){score += 525}
-                    else if (item.contentDescription=="q"){score += 1000}
-                    else if (item.contentDescription=="b"){score += 350}
-                    else if (item.contentDescription=="k"){score += 350}
-                    else if (item.contentDescription=="p"){score += 100}
-                }
-                else if (item.tag == "white"){
-                    if (item.contentDescription=="K" ||item.contentDescription=="K0"){score -= 10000}
-                    else if (item.contentDescription=="r" ||item.contentDescription=="r0"){score -= 525}
-                    else if (item.contentDescription=="q"){score -= 1000}
-                    else if (item.contentDescription=="b"){score -= 350}
-                    else if (item.contentDescription=="k"){score -= 350}
-                    else if (item.contentDescription=="p"){score -= 100}
-                }
-            }
-            return score
         }
 
 
@@ -977,11 +938,14 @@ class MainActivity : AppCompatActivity() {
                     for (item1 in possibleMoves(item)) {
                         var tempPiece = tempMove(item,item1)
 
+                        specialMove(item,item1)
+
                         if (!isChecked(color)) {
+                            resetMove(item, item1)
                             backMove(item,item1,tempPiece)
                             return false
                         }
-
+                        resetMove(item, item1)
                         backMove(item,item1,tempPiece)
                     }
                 }
@@ -990,126 +954,222 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        // calculate board score
+        fun boardScore():Int{
+            var score=0
+            for (item in board1d) {
+                if (item.tag=="black"){
+                    if (item.contentDescription == "K" || item.contentDescription == "K0"){score += 10000}
+                    else if (item.contentDescription == "r" || item.contentDescription == "r0"){score += 525}
+                    else if (item.contentDescription == "q") { score += 1000 }
+                    else if (item.contentDescription == "b") { score += 350 }
+                    else if (item.contentDescription == "k") { score += 350 }
+                    else if (item.contentDescription == "p") { score += 100}
+                } else if (item.tag == "white"){
+                    if (item.contentDescription == "K" || item.contentDescription == "K0"){score -= 10000}
+                    else if (item.contentDescription == "r" || item.contentDescription == "r0"){score -= 525}
+                    else if (item.contentDescription == "q") { score -= 1000 }
+                    else if (item.contentDescription == "b") { score -= 350 }
+                    else if (item.contentDescription == "k") { score -= 350 }
+                    else if (item.contentDescription == "p") { score -= 100 }
+                }
+            }
+            return score
+        }
+
+
+        fun moveScore(color:String,score:Int,depth :Int):Int{
+            var min = 99999
+            var max =-99999
+
+            for (item1 in board1d) {
+                if (item1.tag == color) {
+                    for (item2 in possibleMoves(item1)) {
+
+                        var tempPiece = tempMove(item1,item2)
+                        specialMove(item1,item2)
+
+                        if (isChecked(color)){
+                            resetMove(item1, item2)
+                            backMove(item1,item2,tempPiece)
+                            continue
+                        }
+
+                        if (depth>1) {
+                            if (color == "white") {
+                                min = moveScore("black", min, depth - 1)
+                            } else {
+                                max = moveScore("white", max, depth - 1)
+                            }
+                        }else{
+                            if (color == "white") {
+                                if (min>boardScore()){min=boardScore()}
+                            } else {
+                               if (max<boardScore()){max=boardScore()}
+                            }
+                        }
+
+                        resetMove(item1, item2)
+                        backMove(item1,item2,tempPiece)
+
+                        if (color == "white") {
+                            if (min <=score) {return score}
+                        }else{
+                            if (max>=score){return score}
+                        }
+                    }
+                }
+            }
+            if(color=="white"){return min}else{return max}
+        }
+
+
+        radioGroup.setOnCheckedChangeListener { _, _ ->
+            if (radio_one.isChecked){
+                compLvl=1
+            }else if (radio_two.isChecked){
+                compLvl=2
+            }else{
+                compLvl=3
+            }
+        }
+
         fun bestMove(): BestMove{
+            var minMax = 99999
+            var maxMin = -999999
+            var first = checker00
+            var last = checker00
+
+            for (item1 in boardRandom) {
+                if (item1.tag == "black") {
+                    for (item2 in possibleMoves(item1)) {
+
+                        var tempPiece = tempMove(item1,item2)
+                        specialMove(item1,item2)
+
+                        if (isChecked("white")&&!isChecked("black")) {
+                            if (isCheckmate("white")) {
+                                first = item1
+                                last = item2
+                                textView.text = "Computer Checkmate!"
+                                for (item in board1d) { item.isClickable = false }
+                                return BestMove(first, last, maxMin, true)
+                            }
+                        }
+                        if (isChecked("black")){// || (isDraw("white")&& boardScore()>1000)){
+                            resetMove(item1, item2)
+                            backMove(item1,item2,tempPiece)
+                            continue
+                        }
+
+                        minMax = moveScore("white", maxMin, compLvl)
+
+                        if (maxMin < minMax) {
+                            maxMin = minMax
+                            first = item1
+                            last = item2
+                        }
+
+                        resetMove(item1, item2)
+                        backMove(item1,item2,tempPiece)
+                    }
+                }
+            }
+            button_back.text=maxMin.toString()
+            if (first.contentDescription=="r0"){first.contentDescription="r"}
+            return BestMove(first,last,maxMin,false)
+        }
+
+
+    /**    fun bestMove(): BestMove{
             var minMax = 10000
-            var maxMin = -55000
+            var maxMin = -99999
             var max = -10000
             var min = 10000
             var first = checker00
             var last = checker00
-            var whiteCheckMate = false
-            var tempIndex=11
 
-            for (item in boardRandom) {
-                var kingReset = false
-                if (item.tag == "black") {
-                    for (item1 in possibleMoves(item)) {
-                        var tempPiece = tempMove(item,item1)
+            for (item1 in boardRandom) {
+                if (item1.tag == "black") {
+                    for (item2 in possibleMoves(item1)) {
+                        var tempPiece = tempMove(item1,item2)
+
+                        specialMove(item1,item2)
 
                         if (isChecked("white")&&!isChecked("black")) {
                             if (isCheckmate("white")) {
-                                first = item
-                                last = item1
+                                first = item1
+                                last = item2
                                 textView.text = "Computer Checkmate!"
                                 for (item in board1d) { item.isClickable = false }
                                 return BestMove(first, last, maxMin, true)
                             }
                         }
 
-                        if (isChecked("black") || (isDraw("white")&& boardScore()>1000)){
-                            backMove(item,item1,tempPiece)
-                            resetMove(item, item1)
+                        if (isChecked("black")){// || (isDraw("white")&& boardScore()>1000)){
+                            resetMove(item1, item2)
+                            backMove(item1,item2,tempPiece)
                             continue
                         }
 
-                        specialMove(item,item1,false)
-                        for (item in row2){item.scrollBarSize=4}
-                        if (tempIndex==11) {
-                            for (item in row5) {
-                                if (item.scrollBarSize == 5) {
-                                    tempIndex = row5.indexOf(item)
-                                }
-                            }
-                        }
-                        for (item in row5){item.scrollBarSize=4}
+                        minMax = 99999
+                        for (item1 in board1d) {
+                            if (item1.tag == "white") {
+                                for (item2 in possibleMoves(item1)){
+                                    var tempPiece = tempMove(item1,item2)
 
-                        if (item1.contentDescription=="K0"){
-                            item1.contentDescription="K"
-                            kingReset=true
-                        }
-
-                        if(pawnToQueen()){item.scrollBarSize=1}
-
-                        minMax = 50000
-                        for (item2 in board1d) {
-                            var kingReset2 = false
-                            if (item2.tag == "white") {
-                                for (item3 in possibleMoves(item2)){
-                                    var tempPiece = tempMove(item2,item3)
+                                    specialMove(item1,item2)
 
                                     if (isChecked("white")){
-                                        backMove(item2,item3,tempPiece)
-                                        resetMove(item2, item3)
+                                        resetMove(item1, item2)
+                                        backMove(item1,item2,tempPiece)
                                         continue
                                     }
 
-                                    specialMove(item2,item3,false)
-                                    for (item in row5){item.scrollBarSize=4}
+                                    max = -90000
+                                    for (item1 in board1d) {
+                                        if (item1.tag == "black") {
+                                            for (item2 in possibleMoves(item1)){
+                                                var tempPiece = tempMove(item1,item2)
 
-                                    if (item3.contentDescription=="K0"){
-                                        item3.contentDescription="K"
-                                        kingReset2=true
-                                    }
-
-                                    if(pawnToQueen()){item2.scrollBarSize=1}
-
-                                    max = -50000
-                                    for (item2 in board1d) {
-                                        if (item2.tag == "black") {
-                                            for (item3 in possibleMoves(item2)){
-                                                var tempPiece = tempMove(item2,item3)
+                                                specialMove(item1,item2)
 
                                                 if (isChecked("black")){
-                                                    backMove(item2,item3,tempPiece)
-                                                    resetMove(item2, item3)
+                                                    resetMove(item1, item2)
+                                                    backMove(item1,item2,tempPiece)
                                                     continue
                                                 }
 
-                                                specialMove(item2,item3,false)
-                                                for (item in row2){item.scrollBarSize=4}
-
-                                                if(pawnToQueen()){item2.scrollBarSize=1}
-                                                min = 50000
+                                                /**  min = 99999
                                                 for (item2 in board1d) {
-                                                    if (item2.tag == "white") {
-                                                        for (item3 in possibleMoves(item2)) {
-                                                            var tempPiece = tempMove(item2,item3)
+                                                if (item2.tag == "white") {
+                                                for (item3 in possibleMoves(item2)) {
+                                                var tempPiece = tempMove(item2,item3)
 
-                                                            if (isChecked("white")){
-                                                                backMove(item2,item3,tempPiece)
-                                                                resetMove(item2, item3)
-                                                                continue
-                                                            }
+                                                specialMove(item2,item3)
 
-                                                            specialMove(item2, item3, false)
-                                                           // for (item in row5) { item.scrollBarSize = 4 }
-
-                                                            if(pawnToQueen()){item2.scrollBarSize=1}
-
-                                                            if (min > boardScore()) { min = boardScore()}
-
-                                                            backMove(item2,item3,tempPiece)
-                                                            resetMove(item2, item3)
-
-                                                            if (min <= max) { break}
-                                                        }
-                                                    }
-                                                    if (min <= max) { break}
-                                                }
-                                                if (max < min){ max = min}
-
-                                                backMove(item2,item3,tempPiece)
+                                                if (isChecked("white")){
                                                 resetMove(item2, item3)
+                                                backMove(item2,item3,tempPiece)
+                                                continue
+                                                }
+
+                                                if (min > boardScore()) { min = boardScore()}
+
+                                                resetMove(item2, item3)
+                                                backMove(item2,item3,tempPiece)
+
+                                                if (min <= max) { break}
+                                                }
+                                                }
+                                                if (min <= max) { break}
+                                                }
+                                                if (max < min){ max = min}*/
+
+                                                if(max<boardScore()){max=boardScore()}
+
+                                                resetMove(item1, item2)
+                                                backMove(item1,item2,tempPiece)
 
                                                 if (max >= minMax){break}
                                             }
@@ -1119,13 +1179,8 @@ class MainActivity : AppCompatActivity() {
 
                                     if (minMax > max) { minMax = max }
 
-                                    if (kingReset2){
-                                        item3.contentDescription="K0"
-                                        kingReset2=false
-                                    }
-
-                                    backMove(item2,item3,tempPiece)
-                                    resetMove(item2, item3)
+                                    resetMove(item1, item2)
+                                    backMove(item1,item2,tempPiece)
 
                                     if (minMax <= maxMin) {break }
                                 }
@@ -1133,36 +1188,36 @@ class MainActivity : AppCompatActivity() {
                             if (minMax <= maxMin) { break }
                         }
 
-                        if (tempIndex!=11){
-                            row5[tempIndex].scrollBarSize=5
-                        }
-
                         if (maxMin < minMax) {
                             maxMin = minMax
-                            first = item
-                            last = item1
+                            first = item1
+                            last = item2
                         }
 
-                        if (kingReset){
-                            item1.contentDescription="K0"
-                            kingReset=false
-                        }
-
-                        backMove(item,item1,tempPiece)
-
-                        resetMove(item, item1)
+                        resetMove(item1, item2)
+                        backMove(item1,item2,tempPiece)
                     }
                 }
             }
+            if (first.contentDescription=="r0"){first.contentDescription="r"}
             return BestMove(first,last,maxMin,false)
-        }
+        }*/
 
+
+        fun backStore(store:BackPar,item: ImageButton){
+            store.index=board1d.indexOf(item)
+            store.tag=item.tag.toString()
+            store.contentDescription=item.contentDescription.toString()
+            store.image=item.drawable.toBitmap()
+            store.scrollBarSize=item.scrollBarSize
+    }
 
         fun computerTurn(){
             var cordinate: BestMove
             counter =0
             boardRandom.shuffle()
 
+            for (item in row2){item.scrollBarSize=4}
             if (openining ==0){
                 cordinate = BestMove(checker12,checker20,1,false)
                 openining=1
@@ -1172,18 +1227,39 @@ class MainActivity : AppCompatActivity() {
 
             if (cordinate.checkmate) {
                 for (item in board1d) {
+                    item.backgroundTintList = null
+                    cordinate.last.backgroundTintList = ColorStateList.valueOf(Color.RED)
                     if (item.tag == "white" && (item.contentDescription == "K" || item.contentDescription == "K0")) {
                         item.backgroundTintList = ColorStateList.valueOf(Color.RED)
-                        cordinate.last.setImageBitmap(cordinate.first.drawable.toBitmap())
-                        cordinate.first.setImageResource(R.drawable.empty)
+                        button_new.isEnabled = true
+                        //   button_back.isEnabled=true
+                        vsSwitch.isEnabled = true
+                        //    sound_switch.isEnabled=true
+                        if (cordinate.last.contentDescription == "q" && cordinate.last.scrollBarSize == 1) {
+                            cordinate.last.setImageResource(R.drawable.queen_black)
+                            cordinate.first.setImageResource(R.drawable.empty)
+                        } else {
+                            cordinate.last.setImageBitmap(cordinate.first.drawable.toBitmap())
+                            cordinate.first.setImageResource(R.drawable.empty)
+                        }
                     }
                 }
                 return
             }
 
             if (cordinate.first == checker00) {
-                textView.text = "Draw!!"
-                for (item in board1d) { item.isClickable = false}
+                textView.text = "Draw1!"
+                for (item in board1d) {
+                    item.backgroundTintList = null
+                    item.isClickable = false
+                }
+                button_new.isEnabled=true
+                button_back.isEnabled=true
+                vsSwitch.isEnabled=true
+                radio_one.isEnabled=true
+                radio_two.isEnabled=true
+                radio_three.isEnabled=true
+                //    sound_switch.isEnabled=true
                 return
             }
 
@@ -1197,6 +1273,9 @@ class MainActivity : AppCompatActivity() {
                 cordinate.last.backgroundTintList=ColorStateList.valueOf(Color.RED)
             }
 
+            backStore(back3,cordinate.first)
+            backStore(back4,cordinate.last)
+
             handler.postDelayed({
                 cordinate.last.tag = cordinate.first.tag
                 cordinate.last.contentDescription = cordinate.first.contentDescription
@@ -1205,20 +1284,18 @@ class MainActivity : AppCompatActivity() {
                 cordinate.first.tag = ""
                 cordinate.first.contentDescription = ""
                 cordinate.first.setImageResource(R.drawable.empty)
-                pawnToQueen()
 
-                specialMove(cordinate.first,cordinate.last,true)
-
-                textBug.text=cordinate.last.contentDescription
+                specialMove(cordinate.first,cordinate.last)
 
                 if (cordinate.last.scrollBarSize==1&&cordinate.last.contentDescription=="q") {
                     cordinate.last.setImageResource(R.drawable.queen_black)
-                    for (item in row6){item.scrollBarSize=4}
-                    for (item in row7){item.scrollBarSize=4}                }
+                    cordinate.last.scrollBarSize=4
+                    //for (item in row6){item.scrollBarSize=4}
+                    //for (item in row7){item.scrollBarSize=4}
+                }
 
                 for (item in board1d) { item.backgroundTintList = null}
                 textView.text = "white turn"
-                //button_new.text = counter.toString()
                 turn = "white"
 
                 if (isChecked("white")) {
@@ -1237,6 +1314,13 @@ class MainActivity : AppCompatActivity() {
                     textView.text = "Draw!"
                     for (item in board1d){item.isClickable=false}
                 }
+                button_new.isEnabled=true
+                button_back.isEnabled=true
+                vsSwitch.isEnabled=true
+                radio_one.isEnabled=true
+                radio_two.isEnabled=true
+                radio_three.isEnabled=true
+            //    sound_switch.isEnabled=true
             }, 500)
             return
         }
@@ -1244,6 +1328,7 @@ class MainActivity : AppCompatActivity() {
 
         //action when checkers are clicked
         fun checkerClick(checker: ImageButton) {
+           // button_back.text=boardScore().toString()
             for (item in board1d) {
                 if (item.tag != "" && item.drawable.toBitmap() == checker00.drawable.toBitmap()){
                     item.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
@@ -1268,21 +1353,34 @@ class MainActivity : AppCompatActivity() {
                 tempChecker = checker00
                 return
             }
-            else if (handPice == noPice && checker.tag == turn){
+            else if (handPice == noPice && checker.tag == turn || tempChecker.tag==checker.tag){
               //  mp_move.stop()
               //  mp_move.prepare()
               //  mp_move.start()
 
+                for (item in board1d){
+                    if(item.backgroundTintList!=ColorStateList.valueOf(Color.RED)) {
+                        item.backgroundTintList = null
+                    }
+                }
                 handPice = checker.drawable.toBitmap()
                 checker.backgroundTintList = ColorStateList.valueOf(Color.DKGRAY)
 
                 tempChecker = checker
+                button_back.isEnabled=false
+                backStore(back1,checker)
+
                 for (item in possibleMoves(tempChecker)) {
                     item.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
                 }
                 return
             }
             else if (handPice != noPice && checker in possibleMoves(tempChecker)){
+                backStore(back2,checker)
+
+                if (!vsSwitch.isChecked) {
+                    button_back.isEnabled = true
+                }
                 tempData.image = checker.drawable.toBitmap()
                 tempData.tag = checker.tag.toString()
                 tempData.contentDescription=checker.contentDescription.toString()
@@ -1326,6 +1424,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     return
                 }
+                if (checker.contentDescription=="r0"){checker.contentDescription="r"}
 
                 if (turn == "white"){
                     for (item in row5){item.scrollBarSize=4}
@@ -1333,9 +1432,7 @@ class MainActivity : AppCompatActivity() {
                     for (item in row2){item.scrollBarSize=4}
                 }
 
-                specialMove(tempChecker,checker,true)
-
-                pawnToQueen()
+                specialMove(tempChecker,checker)
 
                 if (checker.scrollBarSize==1&&checker.contentDescription=="q") {
                     if (checker.tag == "white") {
@@ -1381,12 +1478,20 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     textView.text = otherTurn + " under check"
-                    handler.postDelayed({
-                        if (turn == "black" && vsSwitch.isChecked) {
-                            for (item in board1d){item.isClickable=false}
+
+                    if (turn == "black" && vsSwitch.isChecked) {
+                        for (item in board1d){item.isClickable=false}
+                        button_new.isEnabled=false
+                        button_back.isEnabled=false
+                        vsSwitch.isEnabled=false
+                        sound_switch.isEnabled=false
+                        radio_one.isEnabled=false
+                        radio_two.isEnabled=false
+                        radio_three.isEnabled=false
+                        handler.postDelayed({
                             computerTurn()
-                        }
-                    }, 10)
+                        }, 50)
+                    }
                     return
                 }
 
@@ -1402,12 +1507,19 @@ class MainActivity : AppCompatActivity() {
                 turn = otherTurn
 
                 textView.text = turn + " turn"
-                handler.postDelayed({
-                    if (turn == "black" && vsSwitch.isChecked) {
-                        for (item in board1d){item.isClickable=false}
+                if (turn == "black" && vsSwitch.isChecked) {
+                    for (item in board1d){item.isClickable=false}
+                    button_new.isEnabled=false
+                    button_back.isEnabled=false
+                    vsSwitch.isEnabled=false
+                    sound_switch.isEnabled=false
+                    radio_one.isEnabled=false
+                    radio_two.isEnabled=false
+                    radio_three.isEnabled=false
+                    handler.postDelayed({
                         computerTurn()
-                    }
-                }, 10)
+                    }, 50)
+                }
                 return
             }
             else if(handPice == noPice && checker.tag != turn){
@@ -1419,16 +1531,102 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //initiate all checkers on click listeners
+        for (checker in board1d){
+            checker.setOnClickListener {checkerClick(checker)}
+        }
+
+        fun backStore(item:ImageButton, store: BackPar ){
+            item.tag = store.tag
+            item.contentDescription=store.contentDescription
+            item.scrollBarSize=store.scrollBarSize
+            item.setImageBitmap(store.image)
+        }
+
+        //Back Move
+        button_back.setOnClickListener {
+            if (back1.index!=99&&back2.index!=99&&!vsSwitch.isChecked){
+                if (turn=="white"){turn="black"}else{turn="white"}
+                textView.text=turn +" turn"
+                resetMove(board1d[back1.index], board1d[back2.index])
+
+                backStore(board1d[back1.index],back1)
+                backStore(board1d[back2.index],back2)
+
+                if (back2.scrollBarSize==2){
+                    board1d[back2.index+8].tag = "black"
+                    board1d[back2.index+8].contentDescription="p"
+                    board1d[back2.index+8].scrollBarSize=4
+                    board1d[back2.index+8].setImageResource(R.drawable.pawn_black)
+                }
+                else if(back2.scrollBarSize==5){
+                    board1d[back2.index-8].tag = "white"
+                    board1d[back2.index-8].contentDescription="p"
+                    board1d[back2.index-8].scrollBarSize=4
+                    board1d[back2.index-8].setImageResource(R.drawable.pawn_white)
+                }
+
+                back1.index=99
+                back2.index=99
+                button_back.isEnabled=false
+                tempChecker=checker00
+            }
+
+            if (back1.index!=99&&back2.index!=99&&vsSwitch.isChecked){
+                resetMove(board1d[back3.index], board1d[back4.index])
+
+                backStore(board1d[back3.index],back3)
+                backStore(board1d[back4.index],back4)
+
+                if(back4.scrollBarSize==5){
+                    board1d[back4.index-8].tag = "white"
+                    board1d[back4.index-8].contentDescription="p"
+                    board1d[back4.index-8].scrollBarSize=4
+                    board1d[back4.index-8].setImageResource(R.drawable.pawn_white)
+                }
+
+                resetMove(board1d[back1.index], board1d[back2.index])
+
+                backStore(board1d[back1.index],back1)
+                backStore(board1d[back2.index],back2)
+
+                if (back2.scrollBarSize==2){
+                    board1d[back2.index+8].tag = "black"
+                    board1d[back2.index+8].contentDescription="p"
+                    board1d[back2.index+8].scrollBarSize=4
+                    board1d[back2.index+8].setImageResource(R.drawable.pawn_black)
+                }
+
+                back1.index=99
+                back2.index=99
+                back3.index=99
+                back4.index=99
+                button_back.isEnabled=false
+                tempChecker=checker00
+            }
+        }
+
+
+        vsSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (vsSwitch.isChecked) {
+                radio_one.isEnabled=true
+                radio_two.isEnabled=true
+                radio_three.isEnabled=true
+
+            }else{
+                radio_one.isEnabled=false
+                radio_two.isEnabled=false
+                radio_three.isEnabled=false
+            }
+        }
+
+
         //Start new game
         button_new.setOnClickListener {
             val i = baseContext.packageManager
                 .getLaunchIntentForPackage(baseContext.packageName)
             i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(i)
-        }
-        //initiate all checkers on click listeners
-        for (checker in board1d){
-            checker.setOnClickListener {checkerClick(checker)}
         }
     }
 }
