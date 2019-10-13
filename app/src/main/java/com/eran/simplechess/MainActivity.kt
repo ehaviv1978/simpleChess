@@ -21,10 +21,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        data class Cordinate(val row: Int, val column: Int)
         data class BestMove(var first: ImageButton, var last: ImageButton, var score: Int, var checkmate: Boolean)
-        data class CheckerPar(var tag: String, var contentDescription: String, var scrollBarSize: Int, var image: Bitmap)
-        data class TempPiece (var tag:String,var contentDescription: String,var scrollBarSize: Int,var K0:Boolean)
+        data class TempPiece (var tag:String,var contentDescription: String,var scrollBarSize: Int,var K0:Boolean,
+                              var r0: Boolean,var q:Boolean)
         data class CheckerStatus(var tag: String, var contentDescription: String, var scrollBarSize: Int)
         val handler =Handler()
 
@@ -120,99 +119,23 @@ class MainActivity : AppCompatActivity() {
         var row7= row(7)
 
         // all the column on the board as arrays
-        var column0= column(0)
-        var column1= column(1)
+    //    var column0= column(0)
+    //    var column1= column(1)
         var column2= column(2)
-        var column3= column(3)
-        var column4= column(4)
-        var column5= column(5)
+    //    var column3= column(3)
+    //    var column4= column(4)
+    //    var column5= column(5)
         var column6= column(6)
-        var column7= column(7)
+    //    var column7= column(7)
 
-
-        //return the board x,y cordinate of a single checker
-        fun cordinate (item: ImageButton):Cordinate{
-            if (item in row0){
-                return Cordinate(0,row0.indexOf(item))
-            }
-            else if (item in row1){
-                return Cordinate(1,row1.indexOf(item))
-            }
-            else if (item in row2){
-                return Cordinate(2,row2.indexOf(item))
-            }
-            else if (item in row3){
-                return Cordinate(3,row3.indexOf(item))
-            }
-            else if (item in row4){
-                return Cordinate(4,row4.indexOf(item))
-            }
-            else if (item in row5){
-                return Cordinate(5,row5.indexOf(item))
-            }
-            else if (item in row6) {
-                return Cordinate(6, row6.indexOf(item))
-            }
-            return Cordinate(7,row7.indexOf(item))
-        }
-
-
-        fun specialMove(oldChecker:ImageButton,checker:ImageButton){
-            if (checker.contentDescription=="p"){
-                if (checker in row3 && oldChecker in row1){
-                    row2[row3.indexOf(checker)].scrollBarSize=2
-                }
-                else if(checker in row4 && oldChecker in row6){
-                    row5[row4.indexOf(checker)].scrollBarSize=5
-                }
-                else if (checker.scrollBarSize==2){
-                    row3[row2.indexOf(checker)].tag=""
-                    row3[row2.indexOf(checker)].contentDescription=""
-                    row3[row2.indexOf(checker)].setImageResource(R.drawable.empty)
-                }
-                else if (checker.scrollBarSize==5){
-                    row4[row5.indexOf(checker)].tag=""
-                    row4[row5.indexOf(checker)].contentDescription=""
-                    row4[row5.indexOf(checker)].setImageResource(R.drawable.empty)
-                }
-                else if (checker in row0 || checker in row7){
-                    checker.contentDescription = "q"
-                    checker.scrollBarSize = 1
-                }
-            }
-            else if (checker.contentDescription =="K0") {
-                checker.contentDescription="K"
-                if (checker in column6){
-                    board1d[board1d.indexOf(checker)-1].tag=board1d[board1d.indexOf(checker)+1].tag
-                    board1d[board1d.indexOf(checker)-1].contentDescription="r"
-                    if(board1d[board1d.indexOf(checker)-1].drawable.toBitmap()==checker00.drawable.toBitmap()) {
-                        board1d[board1d.indexOf(checker) - 1].setImageBitmap(board1d[board1d.indexOf(checker) + 1].drawable.toBitmap())
-                    }
-                    board1d[board1d.indexOf(checker)+1].tag=""
-                    board1d[board1d.indexOf(checker)+1].contentDescription=""
-                    board1d[board1d.indexOf(checker)+1].setImageResource(R.drawable.empty)
-                }
-                else if (checker in column2){
-                    board1d[board1d.indexOf(checker)+1].tag=board1d[board1d.indexOf(checker)-2].tag
-                    board1d[board1d.indexOf(checker)+1].contentDescription="r"
-                    if(board1d[board1d.indexOf(checker)+1].drawable.toBitmap()==checker00.drawable.toBitmap()) {
-                        board1d[board1d.indexOf(checker) + 1].setImageBitmap(board1d[board1d.indexOf(checker) - 2].drawable.toBitmap())
-                    }
-                    board1d[board1d.indexOf(checker)-2].tag=""
-                    board1d[board1d.indexOf(checker)-2].contentDescription=""
-                    board1d[board1d.indexOf(checker)-2].setImageResource(R.drawable.empty)
-                }
-            }
-            //else if (checker.contentDescription =="r0"){checker.contentDescription="r"}
-        }
 
         // checks if a move is valid and return true or false
         fun isValidMove(oldChecker:ImageButton, newChecker:ImageButton):Boolean{
-            var diff = board1d.indexOf(newChecker) - board1d.indexOf(oldChecker)
-            val rowOld = cordinate(oldChecker).row
-            val columnOld = cordinate(oldChecker).column
-            val rowNew = cordinate(newChecker).row
-            val columnNew = cordinate(newChecker).column
+            var diff = newChecker.transitionName.toInt() - oldChecker.transitionName.toInt()
+            val rowOld = oldChecker.transitionName.toInt()/8
+            val columnOld = oldChecker.transitionName.toInt()%8
+            val rowNew = newChecker.transitionName.toInt()/8
+            val columnNew = newChecker.transitionName.toInt()%8
             val rowDiff = rowNew - rowOld
             val columnDiff = columnNew -columnOld
             var num =2
@@ -270,11 +193,11 @@ class MainActivity : AppCompatActivity() {
                 //checks kingside castling validity
                 else if (oldChecker.contentDescription=="K0" && columnOld== 4 &&
                     (rowOld==0 || rowOld == 7) &&diff == 2 && !isThretened(oldChecker,opositTurn) &&
-                    board1d[board1d.indexOf(oldChecker)+3].contentDescription == "r0" &&
-                    board1d[board1d.indexOf(oldChecker)+2].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(oldChecker)+2],opositTurn) &&
-                    board1d[board1d.indexOf(oldChecker)+1].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(oldChecker)+1],opositTurn)){
+                    board1d[oldChecker.transitionName.toInt()+3].contentDescription == "r0" &&
+                    board1d[oldChecker.transitionName.toInt()+2].contentDescription == "" &&
+                    !isThretened(board1d[oldChecker.transitionName.toInt()+2],opositTurn) &&
+                    board1d[oldChecker.transitionName.toInt()+1].contentDescription == "" &&
+                    !isThretened(board1d[oldChecker.transitionName.toInt()+1],opositTurn)){
                     if (oldChecker.tag == "white"){
                         if (row6[3].tag == "black"&& row6[3].contentDescription =="p"||
                             row6[4].tag == "black"&& row6[4].contentDescription =="p"||
@@ -300,13 +223,13 @@ class MainActivity : AppCompatActivity() {
                 else if (oldChecker.contentDescription=="K0" && columnOld== 4 &&
                     (rowOld==0 || rowOld == 7)&& diff == -2 &&
                     !isThretened(oldChecker,opositTurn) &&
-                    board1d[board1d.indexOf(oldChecker)-4].contentDescription == "r0" &&
-                    board1d[board1d.indexOf(oldChecker)-3].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(oldChecker)-3],opositTurn) &&
-                    board1d[board1d.indexOf(oldChecker)-2].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(oldChecker)-2],opositTurn) &&
-                    board1d[board1d.indexOf(oldChecker)-1].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(oldChecker)-1],opositTurn)){
+                    board1d[oldChecker.transitionName.toInt()-4].contentDescription == "r0" &&
+                    board1d[oldChecker.transitionName.toInt()-3].contentDescription == "" &&
+                    !isThretened(board1d[oldChecker.transitionName.toInt()-3],opositTurn) &&
+                    board1d[oldChecker.transitionName.toInt()-2].contentDescription == "" &&
+                    !isThretened(board1d[oldChecker.transitionName.toInt()-2],opositTurn) &&
+                    board1d[oldChecker.transitionName.toInt()-1].contentDescription == "" &&
+                    !isThretened(board1d[oldChecker.transitionName.toInt()-1],opositTurn)){
                     if (oldChecker.tag == "white"){
                         if (row6[1].tag == "black"&& row6[1].contentDescription =="p"||
                             row6[2].tag == "black"&& row6[2].contentDescription =="p"||
@@ -333,35 +256,35 @@ class MainActivity : AppCompatActivity() {
             fun checkWay(distance:Int):Boolean{
                 for (n in 1..(distance - 1)) {
                     if (rowDiff > 0 && columnDiff > 0) {
-                            if (board2d[cordinate(oldChecker).row + (rowDiff - n)][cordinate(oldChecker).column + (columnDiff - n)].tag != "") {
+                            if (board2d[rowOld + (rowDiff - n)][columnOld + (columnDiff - n)].tag != "") {
                                 return false
                             }
                     } else if (rowDiff < 0 && columnDiff < 0) {
-                            if (board2d[cordinate(oldChecker).row + (rowDiff + n)][cordinate(oldChecker).column + (columnDiff + n)].tag != "") {
+                            if (board2d[rowOld + (rowDiff + n)][columnOld + (columnDiff + n)].tag != "") {
                                 return false
                             }
                     } else if (rowDiff < 0 && columnDiff > 0) {
-                            if (board2d[cordinate(oldChecker).row + (rowDiff + n)][cordinate(oldChecker).column + (columnDiff - n)].tag != "") {
+                            if (board2d[rowOld + (rowDiff + n)][columnOld + (columnDiff - n)].tag != "") {
                                 return false
                             }
                     } else if (rowDiff > 0 && columnDiff < 0) {
-                            if (board2d[cordinate(oldChecker).row + (rowDiff - n)][cordinate(oldChecker).column + (columnDiff + n)].tag != "") {
+                            if (board2d[rowOld + (rowDiff - n)][columnOld + (columnDiff + n)].tag != "") {
                                 return false
                             }
                     } else if (rowDiff > 0) {
-                            if (board2d[cordinate(oldChecker).row + (rowDiff - n)][cordinate(oldChecker).column].tag != "") {
+                            if (board2d[rowOld + (rowDiff - n)][columnOld].tag != "") {
                                 return false
                             }
                     } else if (rowDiff < 0) {
-                            if (board2d[cordinate(oldChecker).row + (rowDiff + n)][cordinate(oldChecker).column].tag != "") {
+                            if (board2d[rowOld + (rowDiff + n)][columnOld].tag != "") {
                                 return false
                             }
                     } else if (columnDiff > 0) {
-                            if (board2d[cordinate(oldChecker).row][cordinate(oldChecker).column + (columnDiff - n)].tag != "") {
+                            if (board2d[rowOld][columnOld + (columnDiff - n)].tag != "") {
                                 return false
                             }
                     } else if (columnDiff < 0) {
-                            if (board2d[cordinate(oldChecker).row][cordinate(oldChecker).column + (columnDiff + n)].tag != "") {
+                            if (board2d[rowOld][columnOld + (columnDiff + n)].tag != "") {
                                 return false
                             }
                     }
@@ -410,7 +333,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
             //return false if move is invalid
             return false
         }
@@ -431,8 +353,8 @@ class MainActivity : AppCompatActivity() {
         fun possibleMoves(checker:ImageButton): ArrayList<ImageButton>{
             val color = checker.tag
             var opositeColor :String
-            val rowOld = cordinate(checker).row
-            val columnOld = cordinate(checker).column
+            val rowOld = checker.transitionName.toInt()/8
+            val columnOld = checker.transitionName.toInt()%8
             if (color == "white"){opositeColor="black"} else {opositeColor ="white"}
             var possibleMoves = ArrayList<ImageButton>()
 
@@ -530,11 +452,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 if (checker.contentDescription=="K0" && columnOld== 4 &&
                     (rowOld==0 || rowOld == 7) && !isThretened(checker,opositeColor) &&
-                    board1d[board1d.indexOf(checker)+3].contentDescription == "r0" &&
-                    board1d[board1d.indexOf(checker)+2].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(checker)+2],opositeColor) &&
-                    board1d[board1d.indexOf(checker)+1].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(checker)+1],opositeColor)) {
+                    board1d[checker.transitionName.toInt()+3].contentDescription == "r0" &&
+                    board1d[checker.transitionName.toInt()+2].contentDescription == "" &&
+                    !isThretened(board1d[checker.transitionName.toInt()+2],opositeColor) &&
+                    board1d[checker.transitionName.toInt()+1].contentDescription == "" &&
+                    !isThretened(board1d[checker.transitionName.toInt()+1],opositeColor)) {
                     if (checker.tag == "white") {
                         if (row6[3].tag == "black" && row6[3].contentDescription == "p" ||
                             row6[4].tag == "black" && row6[4].contentDescription == "p" ||
@@ -560,13 +482,13 @@ class MainActivity : AppCompatActivity() {
                 }
                 if (checker.contentDescription=="K0" && columnOld== 4 &&
                     (rowOld==0 || rowOld == 7)&& !isThretened(checker,opositeColor) &&
-                    board1d[board1d.indexOf(checker)-4].contentDescription == "r0" &&
-                    board1d[board1d.indexOf(checker)-3].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(checker)-3],opositeColor) &&
-                    board1d[board1d.indexOf(checker)-2].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(checker)-2],opositeColor) &&
-                    board1d[board1d.indexOf(checker)-1].contentDescription == "" &&
-                    !isThretened(board1d[board1d.indexOf(checker)-1],opositeColor)) {
+                    board1d[checker.transitionName.toInt()-4].contentDescription == "r0" &&
+                    board1d[checker.transitionName.toInt()-3].contentDescription == "" &&
+                    !isThretened(board1d[checker.transitionName.toInt()-3],opositeColor) &&
+                    board1d[checker.transitionName.toInt()-2].contentDescription == "" &&
+                    !isThretened(board1d[checker.transitionName.toInt()-2],opositeColor) &&
+                    board1d[checker.transitionName.toInt()-1].contentDescription == "" &&
+                    !isThretened(board1d[checker.transitionName.toInt()-1],opositeColor)) {
                     if (checker.tag == "white") {
                         if (row6[1].tag == "black" && row6[1].contentDescription == "p" ||
                             row6[2].tag == "black" && row6[2].contentDescription == "p" ||
@@ -796,94 +718,108 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        fun resetMove(item:ImageButton, item1:ImageButton){
+        fun tempMove (item: ImageButton,item1:ImageButton):TempPiece{
+            var tempPiece=TempPiece("","",4,false, false, false)
+            if (item.contentDescription=="K0"){tempPiece.K0=true
+            }else if (item.contentDescription=="r0"){tempPiece.r0=true}
+            tempPiece.tag = item1.tag.toString()
+            tempPiece.contentDescription = item1.contentDescription.toString()
+            tempPiece.scrollBarSize=item1.scrollBarSize
+            item1.tag = item.tag
+            item1.contentDescription = item.contentDescription
+            item.tag = ""
+            item.contentDescription = ""
+            if (item1.contentDescription=="p"){
+                val column = item1.transitionName.toInt()%8
+                if (item1 in row3 && item in row1){
+                    row2[column].scrollBarSize=2
+                }
+                else if(item1 in row4 && item in row6){
+                    row5[column].scrollBarSize=5
+                }
+                else if (tempPiece.scrollBarSize==2){
+                    row3[column].tag=""
+                    row3[column].contentDescription=""
+                }
+                else if (tempPiece.scrollBarSize==5){
+                    row4[column].tag=""
+                    row4[column].contentDescription=""
+                }
+                else if (item1 in row0 || item1 in row7){
+                    item1.contentDescription = "q"
+                    tempPiece.q=true
+                }
+            }
+            else if (item1.contentDescription =="K0") {
+                item1.contentDescription="K"
+                if (item1 in column6){
+                    board1d[item1.transitionName.toInt()-1].tag=board1d[item1.transitionName.toInt()+1].tag
+                    board1d[item1.transitionName.toInt()-1].contentDescription="r"
+                    board1d[item1.transitionName.toInt()+1].tag=""
+                    board1d[item1.transitionName.toInt()+1].contentDescription=""
+                }
+                else if (item1 in column2){
+                    board1d[item1.transitionName.toInt()+1].tag=board1d[item1.transitionName.toInt()-2].tag
+                    board1d[item1.transitionName.toInt()+1].contentDescription="r"
+                    board1d[item1.transitionName.toInt()-2].tag=""
+                    board1d[item1.transitionName.toInt()-2].contentDescription=""
+                }
+            }
+            else if (item1.contentDescription =="r0"){item1.contentDescription="r"}
+            return tempPiece
+        }
+
+
+        fun resetMove(item:ImageButton, item1:ImageButton,tempPiece:TempPiece){
             if (item1.contentDescription == "p" && item1 in row3 && item in row1){
                 row2[row3.indexOf(item1)].scrollBarSize=4
             }
             else if (item1.contentDescription == "p" && item1 in row4 && item in row6){
                 row5[row4.indexOf(item1)].scrollBarSize=4
             }
-            else if(item1.scrollBarSize==1&&item1.contentDescription=="q"){
-                item1.scrollBarSize=4
-                item1.contentDescription="p"
+            else if (tempPiece.scrollBarSize == 2){
+                board1d[item1.transitionName.toInt() + 8].tag = "black"
+                board1d[item1.transitionName.toInt() + 8].contentDescription = "p"
             }
-
-            else if (item1.scrollBarSize == 2 && item.contentDescription=="p"&& item.tag=="white") {
-                board1d[board1d.indexOf(item1) + 8].tag = "black"
-                board1d[board1d.indexOf(item1) + 8].contentDescription = "p"
-                board1d[board1d.indexOf(item1) + 8].setImageResource(R.drawable.pawn_black)
+            else if (tempPiece.scrollBarSize == 5){
+                board1d[item1.transitionName.toInt() - 8].tag = "white"
+                board1d[item1.transitionName.toInt() - 8].contentDescription = "p"
             }
-            else if (item1.scrollBarSize == 5 && item.contentDescription=="p"&& item.tag=="black") {
-                board1d[board1d.indexOf(item1) - 8].tag = "white"
-                board1d[board1d.indexOf(item1) - 8].contentDescription = "p"
-                board1d[board1d.indexOf(item1) - 8].setImageResource(R.drawable.pawn_white)
-            }
-            else if (item1.contentDescription == "K" && board1d.indexOf(item1) == 62 &&
-                board1d.indexOf(item) == 60){
+            else if (item1.contentDescription == "K" && item1.transitionName.toInt() == 62 &&
+                item.transitionName.toInt() == 60){
                 board1d[63].tag = "white"
                 board1d[63].contentDescription = "r0"
-                board1d[63].setImageResource(R.drawable.rock_white)
                 board1d[61].tag = ""
                 board1d[61].contentDescription = ""
-                if (board1d[61].drawable.toBitmap()==board1d[63].drawable.toBitmap()){
-                    board1d[61].setImageResource(R.drawable.empty)
-                }
-            } else if (item1.contentDescription == "K" && board1d.indexOf(item1) == 58 &&
-                board1d.indexOf(item) == 60) {
+            } else if (item1.contentDescription == "K" && item1.transitionName.toInt() == 58 &&
+                item.transitionName.toInt() == 60) {
                 board1d[56].tag = "white"
                 board1d[56].contentDescription = "r0"
-                board1d[56].setImageResource(R.drawable.rock_white)
                 board1d[59].tag = ""
                 board1d[59].contentDescription = ""
-                if (board1d[59].drawable.toBitmap()==board1d[56].drawable.toBitmap()){
-                    board1d[59].setImageResource(R.drawable.empty)
-                }
             }
-            else if (item1.contentDescription == "K" && board1d.indexOf(item1) == 6 &&
-                board1d.indexOf(item) == 4) {
+            else if (item1.contentDescription == "K" && item1.transitionName.toInt() == 6 &&
+                item.transitionName.toInt() == 4) {
                 board1d[7].tag = "black"
                 board1d[7].contentDescription = "r0"
-                board1d[7].setImageResource(R.drawable.rock_black)
                 board1d[5].tag = ""
                 board1d[5].contentDescription = ""
-                if (board1d[5].drawable.toBitmap()==board1d[7].drawable.toBitmap()){
-                    board1d[5].setImageResource(R.drawable.empty)
-                }
-            } else if (item1.contentDescription == "K" && board1d.indexOf(item1) == 2 &&
-                board1d.indexOf(item) == 4) {
+            } else if (item1.contentDescription == "K" && item1.transitionName.toInt() == 2 &&
+                item.transitionName.toInt() == 4) {
                 board1d[0].tag = "black"
                 board1d[0].contentDescription = "r0"
-                board1d[0].setImageResource(R.drawable.rock_black)
                 board1d[3].tag = ""
                 board1d[3].contentDescription = ""
-                if (board1d[3].drawable.toBitmap()==board1d[0].drawable.toBitmap()){
-                    board1d[3].setImageResource(R.drawable.empty)
-                }
             }
-        }
-
-
-        fun tempMove (item: ImageButton,item1:ImageButton):TempPiece{
-            var tempPiece=TempPiece("","",4,false)
-            if (item.contentDescription=="K0"){tempPiece.K0=true}
-            tempPiece.tag = item1.tag.toString()
-            tempPiece.contentDescription = item1.contentDescription.toString()
-            tempPiece.scrollBarSize=item1.scrollBarSize
-            item1.tag = item.tag
-            item1.contentDescription = item.contentDescription
-            item1.scrollBarSize=item.scrollBarSize
-            item.tag = ""
-            item.contentDescription = ""
-            item.scrollBarSize=4
-            return tempPiece
         }
 
 
         fun backMove (item: ImageButton,item1:ImageButton,tempPiece:TempPiece){
-            if (tempPiece.K0){item1.contentDescription="K0"}
+            if (tempPiece.K0){item1.contentDescription="K0"
+            }else if (tempPiece.r0){item1.contentDescription="r0"
+            }else if(tempPiece.q){ item1.contentDescription="p"}
             item.tag = item1.tag
             item.contentDescription = item1.contentDescription
-            item.scrollBarSize=item1.scrollBarSize
             item1.tag = tempPiece.tag
             item1.contentDescription = tempPiece.contentDescription
             item1.scrollBarSize=tempPiece.scrollBarSize
@@ -919,16 +855,14 @@ class MainActivity : AppCompatActivity() {
                     for (item1 in possibleMoves(item)){
                         var tempPiece = tempMove(item,item1)
 
-                        specialMove(item,item1)
-
                         //check if move is ligal
                         if (!isChecked(color)){
-                            resetMove(item, item1)
+                            resetMove(item, item1,tempPiece)
                             backMove(item,item1,tempPiece)
                             return false
                         }
 
-                        resetMove(item, item1)
+                        resetMove(item, item1,tempPiece)
                         backMove(item,item1,tempPiece)
                     }
                 }
@@ -943,14 +877,12 @@ class MainActivity : AppCompatActivity() {
                     for (item1 in possibleMoves(item)) {
                         var tempPiece = tempMove(item,item1)
 
-                        specialMove(item,item1)
-
                         if (!isChecked(color)) {
-                            resetMove(item, item1)
+                            resetMove(item, item1,tempPiece)
                             backMove(item,item1,tempPiece)
                             return false
                         }
-                        resetMove(item, item1)
+                        resetMove(item, item1,tempPiece)
                         backMove(item,item1,tempPiece)
                     }
                 }
@@ -986,37 +918,60 @@ class MainActivity : AppCompatActivity() {
         fun moveScore(color:String,score:Int,depth :Int):Int{
             var min = 99999
             var max =-99999
+            var index=99
+            if (color=="black") {
+                for (item in row5) {
+                    if (item.scrollBarSize == 5) {
+                        index = row5.indexOf(item)
+                    }
+                }
+            }else{
+                for (item in row2) {
+                    if (item.scrollBarSize == 2) {
+                        index = row2.indexOf(item)
+                    }
+                }
+            }
 
             for (item1 in board1d) {
                 if (item1.tag == color) {
                     for (item2 in possibleMoves(item1)) {
 
                         var tempPiece = tempMove(item1,item2)
-                        specialMove(item1,item2)
 
                         if (isChecked(color)){
-                            resetMove(item1, item2)
+                            resetMove(item1, item2,tempPiece)
                             backMove(item1,item2,tempPiece)
                             continue
                         }
 
                         if (depth>1) {
                             if (color == "white") {
+                                if (index!=99){row2[index].scrollBarSize=4}
                                 min = moveScore("black", min, depth - 1)
                             } else {
+                                if (index!=99){row5[index].scrollBarSize=4}
                                 max = moveScore("white", max, depth - 1)
                             }
                         }else{
                             if (color == "white") {
+                                if (index!=99){row2[index].scrollBarSize=4}
                                 if (min>boardScore()){min=boardScore()}
                             } else {
-                               if (max<boardScore()){max=boardScore()}
+                                if (index!=99){row5[index].scrollBarSize=4}
+                                if (max<boardScore()){max=boardScore()}
                             }
                         }
 
-                        resetMove(item1, item2)
+                        resetMove(item1, item2,tempPiece)
                         backMove(item1,item2,tempPiece)
-
+                        if (index!=99) {
+                            if (color == "black") {
+                                row5[index].scrollBarSize=5
+                            } else {
+                                row2[index].scrollBarSize=2
+                            }
+                        }
                         if (color == "white") {
                             if (min <=score) {return score}
                         }else{
@@ -1034,19 +989,25 @@ class MainActivity : AppCompatActivity() {
             var maxMin = -999999
             var first = checker00
             var last = checker00
+            var index=99
+            for (item in row5){
+                if (item.scrollBarSize==5){
+                    index=row5.indexOf(item)
+                }
+            }
 
             for (item1 in boardRandom) {
                 if (item1.tag == "black") {
                     for (item2 in possibleMoves(item1)) {
 
                         var tempPiece = tempMove(item1,item2)
-                        specialMove(item1,item2)
+                        if (index!=99){row5[index].scrollBarSize=4}
 
                         if (isChecked("white")&&!isChecked("black")) {
                             if (isCheckmate("white")) {
                                 first = item1
                                 last = item2
-                                resetMove(item1, item2)
+                                resetMove(item1, item2,tempPiece)
                                 backMove(item1,item2,tempPiece)
                                 textView.text = "Computer Checkmate!"
                                 for (item in board1d) { item.isClickable = false }
@@ -1054,7 +1015,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         if (isChecked("black")){// || (isDraw("white")&& boardScore()>1000)){
-                            resetMove(item1, item2)
+                            resetMove(item1, item2,tempPiece)
                             backMove(item1,item2,tempPiece)
                             continue
                         }
@@ -1067,18 +1028,66 @@ class MainActivity : AppCompatActivity() {
                             last = item2
                         }
 
-                        resetMove(item1, item2)
+                        resetMove(item1, item2,tempPiece)
                         backMove(item1,item2,tempPiece)
+                        if (index!=99){row5[index].scrollBarSize=5}
                     }
                 }
             }
-         //   button_back.text=maxMin.toString()
-            if (first.contentDescription=="r0"){first.contentDescription="r"}
+            //button_new.text=maxMin.toString()
             return BestMove(first,last,maxMin,false)
         }
 
+        fun boardDraw(){
+            for (item in board1d){
+                if (item.tag==""){
+                    item.setImageResource(R.drawable.empty)
+                }
+                else if (item.tag=="white"){
+                    if (item.contentDescription=="p"){
+                        item.setImageResource(R.drawable.pawn_white)
+                    }
+                    else if (item.contentDescription=="q"){
+                        item.setImageResource(R.drawable.queen_white)
+                    }
+                    else if (item.contentDescription=="k"){
+                        item.setImageResource(R.drawable.knight_white)
+                    }
+                    else if (item.contentDescription=="b"){
+                        item.setImageResource(R.drawable.bishop_white)
+                    }
+                    else if (item.contentDescription=="r"|| item.contentDescription=="r0"){
+                        item.setImageResource(R.drawable.rock_white)
+                    }
+                    else if (item.contentDescription=="K"|| item.contentDescription=="K0"){
+                        item.setImageResource(R.drawable.king_white)
+                    }
+                }
+                else{
+                    if (item.contentDescription=="p"){
+                        item.setImageResource(R.drawable.pawn_black)
+                    }
+                    else if (item.contentDescription=="q"){
+                        item.setImageResource(R.drawable.queen_black)
+                    }
+                    else if (item.contentDescription=="k"){
+                        item.setImageResource(R.drawable.knight_black)
+                    }
+                    else if (item.contentDescription=="b"){
+                        item.setImageResource(R.drawable.bishop_black)
+                    }
+                    else if (item.contentDescription=="r"|| item.contentDescription=="r0"){
+                        item.setImageResource(R.drawable.rock_black)
+                    }
+                    else if (item.contentDescription=="K"|| item.contentDescription=="K0"){
+                        item.setImageResource(R.drawable.king_black)
+                    }
+                }
+            }
+        }
 
         fun boardStatusStore(){
+            boardDraw()
             button_forward.isEnabled=false
             if (sound_switch.isChecked) {
                 mp_move.start()
@@ -1095,9 +1104,9 @@ class MainActivity : AppCompatActivity() {
 
 
         fun computerTurn(){
-            var cordinate: BestMove
             counter =0
-            boardRandom.shuffle()
+            var cordinate: BestMove
+          //  boardRandom.shuffle()
 
             for (item in row2){item.scrollBarSize=4}
             if (openining ==0){
@@ -1112,20 +1121,8 @@ class MainActivity : AppCompatActivity() {
                     mp_loos.start()
                 }
                 handler.postDelayed({
-                    cordinate.last.tag = cordinate.first.tag
-                    cordinate.last.contentDescription = cordinate.first.contentDescription
-                    cordinate.last.setImageBitmap(cordinate.first.drawable.toBitmap())
-
-                    cordinate.first.tag = ""
-                    cordinate.first.contentDescription = ""
-                    cordinate.first.setImageResource(R.drawable.empty)
-
-                    specialMove(cordinate.first,cordinate.last)
-
-                    if (cordinate.last.scrollBarSize==1&&cordinate.last.contentDescription=="q") {
-                        cordinate.last.setImageResource(R.drawable.queen_black)
-                        cordinate.last.scrollBarSize=4
-                    }
+                    tempMove(cordinate.first,cordinate.last)
+                    for (item in row5){item.scrollBarSize=4}
 
                     boardStatusStore()
 
@@ -1182,20 +1179,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             handler.postDelayed({
-                cordinate.last.tag = cordinate.first.tag
-                cordinate.last.contentDescription = cordinate.first.contentDescription
-                cordinate.last.setImageBitmap(cordinate.first.drawable.toBitmap())
-
-                cordinate.first.tag = ""
-                cordinate.first.contentDescription = ""
-                cordinate.first.setImageResource(R.drawable.empty)
-
-                specialMove(cordinate.first,cordinate.last)
-
-                if (cordinate.last.scrollBarSize==1&&cordinate.last.contentDescription=="q") {
-                    cordinate.last.setImageResource(R.drawable.queen_black)
-                    cordinate.last.scrollBarSize=4
-                }
+                tempMove(cordinate.first,cordinate.last)
+                for (item in row5){item.scrollBarSize=4}
 
                 boardStatusStore()
 
@@ -1233,13 +1218,8 @@ class MainActivity : AppCompatActivity() {
 
         //action when checkers are clicked
         fun checkerClick(checker: ImageButton) {
-           // button_back.text=boardScore().toString()
-            for (item in board1d) {
-                if (item.tag != "" && item.drawable.toBitmap() == checker00.drawable.toBitmap()){
-                    item.backgroundTintList = ColorStateList.valueOf(Color.LTGRAY)
-                }
-            }
-            var tempData = CheckerPar("","",4,noPice)
+            //button_new.text=checker.scrollBarSize.toString()
+            var tempData :TempPiece
             var otherTurn =""
             if (turn == "white"){ otherTurn="black" }else{ otherTurn="white" }
 
@@ -1274,15 +1254,7 @@ class MainActivity : AppCompatActivity() {
                 if (!vsSwitch.isChecked) {
                     button_back.isEnabled = true
                 }
-                tempData.image = checker.drawable.toBitmap()
-                tempData.tag = checker.tag.toString()
-                tempData.contentDescription=checker.contentDescription.toString()
-                checker.setImageBitmap(handPice)
-                checker.tag = turn
-                checker.contentDescription = tempChecker.contentDescription
-                tempChecker.setImageResource(R.drawable.empty)
-                tempChecker.tag = ""
-                tempChecker.contentDescription = ""
+                tempData=tempMove(tempChecker,checker)
                 handPice=noPice
                 for (item in board1d){
                     if(item.backgroundTintList!=ColorStateList.valueOf(Color.RED)) {
@@ -1296,15 +1268,8 @@ class MainActivity : AppCompatActivity() {
                         mp_error.start()
                     }
                     textView.text ="Illigal move!"
-                    tempChecker.setImageBitmap(checker.drawable.toBitmap())
-                    tempChecker.tag= checker.tag
-                    tempChecker.contentDescription = checker.contentDescription
-                    checker.setImageBitmap(tempData.image)
-                    checker.tag = tempData.tag
-                    checker.contentDescription = tempData.contentDescription
-                    tempData.image =noPice
-                    tempData.tag =""
-                    tempData.contentDescription=""
+                    resetMove(tempChecker, checker,tempData)
+                    backMove(tempChecker,checker,tempData)
                     tempChecker =checker00
                     for (item in board1d){
                         if ((item.contentDescription=="K" || item.contentDescription=="K0") &&
@@ -1314,29 +1279,15 @@ class MainActivity : AppCompatActivity() {
                     }
                     return
                 }
-                if (checker.contentDescription=="r0"){checker.contentDescription="r"}
 
-                if (turn == "white"){
+                if (turn == "black"){
                     for (item in row5){item.scrollBarSize=4}
                 }else{
                     for (item in row2){item.scrollBarSize=4}
                 }
 
-                specialMove(tempChecker,checker)
                 boardStatusStore()
 
-                if (checker.scrollBarSize==1&&checker.contentDescription=="q") {
-                    if (checker.tag == "white") {
-                        checker.setImageResource(R.drawable.queen_white)
-                        for (item in row0){item.scrollBarSize=4}
-                        for (item in row1){item.scrollBarSize=4}
-                    } else {
-                        checker.setImageResource(R.drawable.queen_black)
-                        for (item in row6){item.scrollBarSize=4}
-                        for (item in row7){item.scrollBarSize=4}
-                    }
-                }
-                checker.scrollBarSize=4
                // checks if oponent is checked
                 if (isChecked(otherTurn)){
                     if (sound_switch.isChecked) {
@@ -1436,54 +1387,6 @@ class MainActivity : AppCompatActivity() {
             checker.setOnClickListener {checkerClick(checker)}
         }
 
-
-        fun boardDraw(){
-            for (item in board1d){
-                 if (item.tag==""){
-                     item.setImageResource(R.drawable.empty)
-                }
-                else if (item.tag=="white"){
-                     if (item.contentDescription=="p"){
-                        item.setImageResource(R.drawable.pawn_white)
-                    }
-                    else if (item.contentDescription=="q"){
-                        item.setImageResource(R.drawable.queen_white)
-                    }
-                    else if (item.contentDescription=="k"){
-                        item.setImageResource(R.drawable.knight_white)
-                    }
-                    else if (item.contentDescription=="b"){
-                        item.setImageResource(R.drawable.bishop_white)
-                    }
-                    else if (item.contentDescription=="r"|| item.contentDescription=="r0"){
-                        item.setImageResource(R.drawable.rock_white)
-                    }
-                    else if (item.contentDescription=="K"|| item.contentDescription=="K0"){
-                        item.setImageResource(R.drawable.king_white)
-                    }
-                }
-                else{
-                    if (item.contentDescription=="p"){
-                        item.setImageResource(R.drawable.pawn_black)
-                    }
-                    else if (item.contentDescription=="q"){
-                        item.setImageResource(R.drawable.queen_black)
-                    }
-                    else if (item.contentDescription=="k"){
-                        item.setImageResource(R.drawable.knight_black)
-                    }
-                    else if (item.contentDescription=="b"){
-                        item.setImageResource(R.drawable.bishop_black)
-                    }
-                    else if (item.contentDescription=="r"|| item.contentDescription=="r0"){
-                        item.setImageResource(R.drawable.rock_black)
-                    }
-                    else if (item.contentDescription=="K"|| item.contentDescription=="K0"){
-                        item.setImageResource(R.drawable.king_black)
-                    }
-                }
-            }
-        }
 
         //Back Move
         button_back.setOnClickListener {
