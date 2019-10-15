@@ -21,10 +21,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        data class BestMove(var first: ImageButton, var last: ImageButton, var score: Int, var checkmate: Boolean)
-        data class TempPiece (var tag:String,var contentDescription: String,var scrollBarSize: Int,var K0:Boolean,
-                              var r0: Boolean,var q:Boolean)
-        data class CheckerStatus(var tag: String, var contentDescription: String, var scrollBarSize: Int)
+        data class BestMove(var first: ImageButton, var last: ImageButton, var score: Int,
+                            var checkmate: Boolean)
+        data class TempPiece (var tag:String,var contentDescription: String,var scrollBarSize: Int,
+                              var K0:Boolean, var r0: Boolean,var q:Boolean)
+        data class CheckerStatus(var tag: String, var contentDescription: String,
+                                 var scrollBarSize: Int)
         val handler =Handler()
 
         var boardsStatus = arrayOf<Array<CheckerStatus>>()
@@ -37,8 +39,8 @@ class MainActivity : AppCompatActivity() {
             checker44,checker45,checker46, checker47,checker48,checker49,checker50,checker51,checker52,
             checker53,checker54,checker55,checker56,checker57, checker58,checker59,checker60,checker61,
             checker62,checker63)
-        val boardRandom = mutableListOf(checker0,checker1,checker2, checker3,checker4,checker5, checker6, checker7,
-            checker8,checker9,checker10,checker11,checker12,checker13,checker14,checker15,checker16,
+        val boardRandom = mutableListOf(checker0,checker1,checker2, checker3,checker4,checker5, checker6,
+            checker7, checker8,checker9,checker10,checker11,checker12,checker13,checker14,checker15,checker16,
             checker17,checker18,checker19,checker20,checker21,checker22,checker23,checker24,checker25,
             checker26,checker27,checker28,checker29,checker30,checker31,checker32,checker33,checker34,
             checker35, checker36,checker37,checker38,checker39,checker40,checker41,checker42,checker43,
@@ -59,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         val mp_win=MediaPlayer.create(this,R.raw.player_win)
         val mp_loos=MediaPlayer.create(this,R.raw.computer_win)
         val mp_draw=MediaPlayer.create(this,R.raw.draw)
+        val mp_new=MediaPlayer.create(this,R.raw.new_game)
         var counter =0
 
         button_back.isEnabled=false
@@ -109,29 +112,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         // all the rows on the board as arrays
-        var row0= row(0)
-        var row1= row(1)
-        var row2= row(2)
-        var row3= row(3)
-        var row4= row(4)
-        var row5= row(5)
-        var row6= row(6)
-        var row7= row(7)
+        val row0= row(0)
+        val row1= row(1)
+        val row2= row(2)
+        val row3= row(3)
+        val row4= row(4)
+        val row5= row(5)
+        val row6= row(6)
+        val row7= row(7)
 
-        // all the column on the board as arrays
-    //    var column0= column(0)
-    //    var column1= column(1)
-        var column2= column(2)
-    //    var column3= column(3)
-    //    var column4= column(4)
-    //    var column5= column(5)
-        var column6= column(6)
-    //    var column7= column(7)
+        // two column useed as arrays
+        val column2= column(2)
+        val column6= column(6)
 
 
         // checks if a move is valid and return true or false
         fun isValidMove(oldChecker:ImageButton, newChecker:ImageButton):Boolean{
-            var diff = newChecker.transitionName.toInt() - oldChecker.transitionName.toInt()
+            val diff = newChecker.transitionName.toInt() - oldChecker.transitionName.toInt()
             val rowOld = oldChecker.transitionName.toInt()/8
             val columnOld = oldChecker.transitionName.toInt()%8
             val rowNew = newChecker.transitionName.toInt()/8
@@ -153,6 +150,47 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
 
+            //checks if ways is clear of peaces
+            fun checkWay(distance:Int):Boolean{
+                for (n in 1..(distance - 1)) {
+                    if (rowDiff > 0 && columnDiff > 0) {
+                        if (board2d[rowOld + (rowDiff - n)][columnOld + (columnDiff - n)].tag != "") {
+                            return false
+                        }
+                    } else if (rowDiff < 0 && columnDiff < 0) {
+                        if (board2d[rowOld + (rowDiff + n)][columnOld + (columnDiff + n)].tag != "") {
+                            return false
+                        }
+                    } else if (rowDiff < 0 && columnDiff > 0) {
+                        if (board2d[rowOld + (rowDiff + n)][columnOld + (columnDiff - n)].tag != "") {
+                            return false
+                        }
+                    } else if (rowDiff > 0 && columnDiff < 0) {
+                        if (board2d[rowOld + (rowDiff - n)][columnOld + (columnDiff + n)].tag != "") {
+                            return false
+                        }
+                    } else if (rowDiff > 0) {
+                        if (board2d[rowOld + (rowDiff - n)][columnOld].tag != "") {
+                            return false
+                        }
+                    } else if (rowDiff < 0) {
+                        if (board2d[rowOld + (rowDiff + n)][columnOld].tag != "") {
+                            return false
+                        }
+                    } else if (columnDiff > 0) {
+                        if (board2d[rowOld][columnOld + (columnDiff - n)].tag != "") {
+                            return false
+                        }
+                    } else if (columnDiff < 0) {
+                        if (board2d[rowOld][columnOld + (columnDiff + n)].tag != "") {
+                            return false
+                        }
+                    }
+                }
+                // return true if way is clear
+                return true
+            }
+
             //checks knight move
             if (oldChecker.contentDescription == "k"){
                 if ((abs(rowDiff)==2 && abs(columnDiff)==1) || (abs(rowDiff)==1 && abs(columnDiff)==2)){
@@ -161,7 +199,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             //checks pawn move
-            if (oldChecker.contentDescription == "p") {
+            else if (oldChecker.contentDescription == "p") {
                 if ((newChecker.tag == "" && columnDiff == 0 && rowDiff == 1 * num) ||
                     (newChecker.tag == opositTurn && abs(columnDiff) == 1 && rowDiff == num * 1)){
                         return true
@@ -179,122 +217,73 @@ class MainActivity : AppCompatActivity() {
                           return true
                       }
                 }
-
             }
 
             //checks king move
-            if (oldChecker.contentDescription == "K" ||oldChecker.contentDescription == "K0") {
+            else if (oldChecker.contentDescription == "K" ||oldChecker.contentDescription == "K0") {
 
-                if (((abs(rowDiff) == 1) && (abs(columnDiff) == 1)) || ((abs(rowDiff) == 1) && (columnDiff==0)) ||
-                    ((rowDiff == 0) && (abs(columnDiff) == 1))){
+                if (((abs(rowDiff) == 1) && (abs(columnDiff) == 1)) || ((abs(rowDiff) == 1) &&
+                            (columnDiff == 0)) || ((rowDiff == 0) && (abs(columnDiff) == 1))) {
                     return true
                 }
 
                 //checks kingside castling validity
-                else if (oldChecker.contentDescription=="K0" && columnOld== 4 &&
-                    (rowOld==0 || rowOld == 7) &&diff == 2 && !isThretened(oldChecker,opositTurn) &&
-                    board1d[oldChecker.transitionName.toInt()+3].contentDescription == "r0" &&
-                    board1d[oldChecker.transitionName.toInt()+2].contentDescription == "" &&
-                    !isThretened(board1d[oldChecker.transitionName.toInt()+2],opositTurn) &&
-                    board1d[oldChecker.transitionName.toInt()+1].contentDescription == "" &&
-                    !isThretened(board1d[oldChecker.transitionName.toInt()+1],opositTurn)){
-                    if (oldChecker.tag == "white"){
-                        if (row6[3].tag == "black"&& row6[3].contentDescription =="p"||
-                            row6[4].tag == "black"&& row6[4].contentDescription =="p"||
-                            row6[5].tag == "black"&& row6[5].contentDescription =="p"||
-                            row6[6].tag == "black"&& row6[6].contentDescription =="p"||
-                            row6[7].tag == "black"&& row6[7].contentDescription =="p"){
-                            return false
+                else if (oldChecker.contentDescription == "K0" && columnOld == 4 &&
+                    (rowOld == 0 || rowOld == 7)){
+                    if (diff == 2 &&
+                        board1d[oldChecker.transitionName.toInt() + 3].contentDescription == "r0" &&
+                        board1d[oldChecker.transitionName.toInt() + 2].contentDescription == "" &&
+                        board1d[oldChecker.transitionName.toInt() + 1].contentDescription == "") {
+                        if (!isThretened(oldChecker, opositTurn) &&
+                            !isThretened(board1d[oldChecker.transitionName.toInt() + 2], opositTurn) &&
+                            !isThretened(board1d[oldChecker.transitionName.toInt() + 1], opositTurn)) {
+                            if (oldChecker.tag == "white") {
+                                if (row6[4].tag == "black" && row6[4].contentDescription == "p" ||
+                                    row6[6].tag == "black" && row6[6].contentDescription == "p" ||
+                                    row6[7].tag == "black" && row6[7].contentDescription == "p") {
+                                    return false
+                                }
+                            } else {
+                                if (row1[4].tag == "white" && row1[4].contentDescription == "p" ||
+                                    row1[6].tag == "white" && row1[6].contentDescription == "p" ||
+                                    row1[7].tag == "white" && row1[7].contentDescription == "p") {
+                                    return false
+                                }
+                            }
+                            return true
                         }
                     }
-                    else{
-                        if (row1[3].tag == "white"&& row1[3].contentDescription =="p"||
-                            row1[4].tag == "white"&& row1[4].contentDescription =="p"||
-                            row1[5].tag == "white"&& row1[5].contentDescription =="p"||
-                            row1[6].tag == "white"&& row1[6].contentDescription =="p"||
-                            row1[7].tag == "white"&& row1[7].contentDescription =="p"){
-                            return false
-                        }
-                    }
-                    return true
-                }
 
-                //checks queenside castling validity
-                else if (oldChecker.contentDescription=="K0" && columnOld== 4 &&
-                    (rowOld==0 || rowOld == 7)&& diff == -2 &&
-                    !isThretened(oldChecker,opositTurn) &&
-                    board1d[oldChecker.transitionName.toInt()-4].contentDescription == "r0" &&
-                    board1d[oldChecker.transitionName.toInt()-3].contentDescription == "" &&
-                    !isThretened(board1d[oldChecker.transitionName.toInt()-3],opositTurn) &&
-                    board1d[oldChecker.transitionName.toInt()-2].contentDescription == "" &&
-                    !isThretened(board1d[oldChecker.transitionName.toInt()-2],opositTurn) &&
-                    board1d[oldChecker.transitionName.toInt()-1].contentDescription == "" &&
-                    !isThretened(board1d[oldChecker.transitionName.toInt()-1],opositTurn)){
-                    if (oldChecker.tag == "white"){
-                        if (row6[1].tag == "black"&& row6[1].contentDescription =="p"||
-                            row6[2].tag == "black"&& row6[2].contentDescription =="p"||
-                            row6[3].tag == "black"&& row6[3].contentDescription =="p"||
-                            row6[4].tag == "black"&& row6[4].contentDescription =="p"||
-                            row6[5].tag == "black"&& row6[5].contentDescription =="p"){
-                            return false
+                    //checks queenside castling validity
+                    else if (diff == -2 &&
+                        board1d[oldChecker.transitionName.toInt() - 4].contentDescription == "r0" &&
+                        board1d[oldChecker.transitionName.toInt() - 3].contentDescription == "" &&
+                        board1d[oldChecker.transitionName.toInt() - 2].contentDescription == "" &&
+                        board1d[oldChecker.transitionName.toInt() - 1].contentDescription == "") {
+                        if (!isThretened(oldChecker, opositTurn) &&
+                            !isThretened(board1d[oldChecker.transitionName.toInt() - 2], opositTurn) &&
+                            !isThretened(board1d[oldChecker.transitionName.toInt() - 1], opositTurn)) {
+                            if (oldChecker.tag == "white") {
+                                if (row6[1].tag == "black" && row6[1].contentDescription == "p" ||
+                                    row6[2].tag == "black" && row6[2].contentDescription == "p" ||
+                                    row6[4].tag == "black" && row6[4].contentDescription == "p") {
+                                    return false
+                                }
+                            } else {
+                                if (row1[1].tag == "white" && row1[1].contentDescription == "p" ||
+                                    row1[2].tag == "white" && row1[2].contentDescription == "p" ||
+                                    row1[4].tag == "white" && row1[4].contentDescription == "p") {
+                                    return false
+                                }
+                            }
+                            return true
                         }
                     }
-                   else{
-                        if (row1[1].tag == "white"&& row1[1].contentDescription =="p"||
-                            row1[2].tag == "white"&& row1[2].contentDescription =="p"||
-                            row1[3].tag == "white"&& row1[3].contentDescription =="p"||
-                            row1[4].tag == "white"&& row1[4].contentDescription =="p"||
-                            row1[5].tag == "white"&& row1[5].contentDescription =="p"){
-                            return false
-                        }
-                    }
-                    return true
                 }
-            }
-
-            //checks if ways is clear of peaces
-            fun checkWay(distance:Int):Boolean{
-                for (n in 1..(distance - 1)) {
-                    if (rowDiff > 0 && columnDiff > 0) {
-                            if (board2d[rowOld + (rowDiff - n)][columnOld + (columnDiff - n)].tag != "") {
-                                return false
-                            }
-                    } else if (rowDiff < 0 && columnDiff < 0) {
-                            if (board2d[rowOld + (rowDiff + n)][columnOld + (columnDiff + n)].tag != "") {
-                                return false
-                            }
-                    } else if (rowDiff < 0 && columnDiff > 0) {
-                            if (board2d[rowOld + (rowDiff + n)][columnOld + (columnDiff - n)].tag != "") {
-                                return false
-                            }
-                    } else if (rowDiff > 0 && columnDiff < 0) {
-                            if (board2d[rowOld + (rowDiff - n)][columnOld + (columnDiff + n)].tag != "") {
-                                return false
-                            }
-                    } else if (rowDiff > 0) {
-                            if (board2d[rowOld + (rowDiff - n)][columnOld].tag != "") {
-                                return false
-                            }
-                    } else if (rowDiff < 0) {
-                            if (board2d[rowOld + (rowDiff + n)][columnOld].tag != "") {
-                                return false
-                            }
-                    } else if (columnDiff > 0) {
-                            if (board2d[rowOld][columnOld + (columnDiff - n)].tag != "") {
-                                return false
-                            }
-                    } else if (columnDiff < 0) {
-                            if (board2d[rowOld][columnOld + (columnDiff + n)].tag != "") {
-                                return false
-                            }
-                    }
-                }
-                // return true if way is clear
-                return true
             }
 
             //checks rock move
-            if (oldChecker.contentDescription == "r" || oldChecker.contentDescription == "r0") {
+            else if (oldChecker.contentDescription == "r" || oldChecker.contentDescription == "r0") {
                 for (i in (1..7)){
                     if (((abs(rowDiff) == i) && (columnDiff==0)) || ((rowDiff == 0) && (abs(columnDiff) == i))){
                         if (i >1) {
@@ -310,7 +299,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             //checks bishop move
-            if (oldChecker.contentDescription == "b") {
+            else if (oldChecker.contentDescription == "b") {
                 for (i in (1..7)){
                     if (((abs(rowDiff) == i) && (abs(columnDiff)==i))){
                         if (i >1) {
@@ -322,10 +311,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             //checks queen move
-            if (oldChecker.contentDescription == "q") {
+            else if (oldChecker.contentDescription == "q") {
                 for (i in (1..7)) {
-                    if (((abs(rowDiff) == i) && (abs(columnDiff) == i)) ||((abs(rowDiff) == i) && (columnDiff==0)) ||
-                        ((rowDiff == 0) && (abs(columnDiff) == i))) {
+                    if (((abs(rowDiff) == i) && (abs(columnDiff) == i)) ||((abs(rowDiff) == i) &&
+                                (columnDiff==0)) || ((rowDiff == 0) && (abs(columnDiff) == i))) {
                         if (i > 1) {
                             return checkWay(i)
                         }
@@ -333,7 +322,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            //return false if move is invalid
             return false
         }
 
@@ -352,11 +340,11 @@ class MainActivity : AppCompatActivity() {
         // retrun an array of legal moves for a given pice
         fun possibleMoves(checker:ImageButton): ArrayList<ImageButton>{
             val color = checker.tag
-            var opositeColor :String
+            val opositeColor :String
             val rowOld = checker.transitionName.toInt()/8
             val columnOld = checker.transitionName.toInt()%8
             if (color == "white"){opositeColor="black"} else {opositeColor ="white"}
-            var possibleMoves = ArrayList<ImageButton>()
+            val possibleMoves = ArrayList<ImageButton>()
 
             if (checker.contentDescription == "k"){
                 try {
@@ -409,111 +397,102 @@ class MainActivity : AppCompatActivity() {
                 catch (e: ArrayIndexOutOfBoundsException){null}
             }
 
-            else if(checker.contentDescription == "K" ||checker.contentDescription == "K0"){
-                if (rowOld-1>-1 && columnOld-1>-1){
-                    if (board2d[rowOld-1][columnOld-1].tag!=color){
-                        possibleMoves.add(board2d[rowOld-1][columnOld-1])
+            else if(checker.contentDescription == "K" ||checker.contentDescription == "K0") {
+                if (rowOld - 1 > -1 && columnOld - 1 > -1) {
+                    if (board2d[rowOld - 1][columnOld - 1].tag != color) {
+                        possibleMoves.add(board2d[rowOld - 1][columnOld - 1])
                     }
                 }
-                if (rowOld-1>-1 && columnOld+1<8){
-                    if (board2d[rowOld-1][columnOld+1].tag!=color){
-                        possibleMoves.add(board2d[rowOld-1][columnOld+1])
+                if (rowOld - 1 > -1 && columnOld + 1 < 8) {
+                    if (board2d[rowOld - 1][columnOld + 1].tag != color) {
+                        possibleMoves.add(board2d[rowOld - 1][columnOld + 1])
                     }
                 }
-                if (rowOld+1<8 && columnOld-1>-1){
-                    if (board2d[rowOld+1][columnOld-1].tag!=color){
-                        possibleMoves.add(board2d[rowOld+1][columnOld-1])
+                if (rowOld + 1 < 8 && columnOld - 1 > -1) {
+                    if (board2d[rowOld + 1][columnOld - 1].tag != color) {
+                        possibleMoves.add(board2d[rowOld + 1][columnOld - 1])
                     }
                 }
-                if (rowOld+1<8 && columnOld+1<8){
-                    if (board2d[rowOld+1][columnOld+1].tag!=color){
-                        possibleMoves.add(board2d[rowOld+1][columnOld+1])
+                if (rowOld + 1 < 8 && columnOld + 1 < 8) {
+                    if (board2d[rowOld + 1][columnOld + 1].tag != color) {
+                        possibleMoves.add(board2d[rowOld + 1][columnOld + 1])
                     }
                 }
-                if (rowOld-1>-1){
-                    if (board2d[rowOld-1][columnOld].tag!=color){
-                        possibleMoves.add(board2d[rowOld-1][columnOld])
+                if (rowOld - 1 > -1) {
+                    if (board2d[rowOld - 1][columnOld].tag != color) {
+                        possibleMoves.add(board2d[rowOld - 1][columnOld])
                     }
                 }
-                if (rowOld+1<8){
-                    if (board2d[rowOld+1][columnOld].tag!=color){
-                        possibleMoves.add(board2d[rowOld+1][columnOld])
+                if (rowOld + 1 < 8) {
+                    if (board2d[rowOld + 1][columnOld].tag != color) {
+                        possibleMoves.add(board2d[rowOld + 1][columnOld])
                     }
                 }
-                if (columnOld-1>-1){
-                    if (board2d[rowOld][columnOld-1].tag!=color){
-                        possibleMoves.add(board2d[rowOld][columnOld-1])
+                if (columnOld - 1 > -1) {
+                    if (board2d[rowOld][columnOld - 1].tag != color) {
+                        possibleMoves.add(board2d[rowOld][columnOld - 1])
                     }
                 }
-                if (columnOld+1<8){
-                    if (board2d[rowOld][columnOld+1].tag!=color){
-                        possibleMoves.add(board2d[rowOld][columnOld+1])
+                if (columnOld + 1 < 8) {
+                    if (board2d[rowOld][columnOld + 1].tag != color) {
+                        possibleMoves.add(board2d[rowOld][columnOld + 1])
                     }
                 }
-                if (checker.contentDescription=="K0" && columnOld== 4 &&
-                    (rowOld==0 || rowOld == 7) && !isThretened(checker,opositeColor) &&
-                    board1d[checker.transitionName.toInt()+3].contentDescription == "r0" &&
-                    board1d[checker.transitionName.toInt()+2].contentDescription == "" &&
-                    !isThretened(board1d[checker.transitionName.toInt()+2],opositeColor) &&
-                    board1d[checker.transitionName.toInt()+1].contentDescription == "" &&
-                    !isThretened(board1d[checker.transitionName.toInt()+1],opositeColor)) {
-                    if (checker.tag == "white") {
-                        if (row6[3].tag == "black" && row6[3].contentDescription == "p" ||
-                            row6[4].tag == "black" && row6[4].contentDescription == "p" ||
-                            row6[5].tag == "black" && row6[5].contentDescription == "p" ||
-                            row6[6].tag == "black" && row6[6].contentDescription == "p" ||
-                            row6[7].tag == "black" && row6[7].contentDescription == "p") {
-                            null
-                        } else{
-                            possibleMoves.add(board2d[rowOld][columnOld+2])
+                if (checker.contentDescription == "K0" && columnOld == 4 &&
+                    (rowOld == 0 || rowOld == 7)){
+                    if (board1d[checker.transitionName.toInt() + 3].contentDescription == "r0" &&
+                        board1d[checker.transitionName.toInt() + 2].contentDescription == "" &&
+                        board1d[checker.transitionName.toInt() + 1].contentDescription == ""){
+                        if (!isThretened(checker, opositeColor) &&
+                            !isThretened(board1d[checker.transitionName.toInt() + 2], opositeColor)&&
+                            !isThretened(board1d[checker.transitionName.toInt() + 1], opositeColor)){
+                            if (checker.tag == "white") {
+                                if (row6[4].tag == "black" && row6[4].contentDescription == "p" ||
+                                    row6[6].tag == "black" && row6[6].contentDescription == "p" ||
+                                    row6[7].tag == "black" && row6[7].contentDescription == "p"){
+                                    null
+                                } else {
+                                    possibleMoves.add(board2d[rowOld][columnOld + 2])
+                                }
+                            } else {
+                                if (row1[4].tag == "white" && row1[4].contentDescription == "p" ||
+                                    row1[6].tag == "white" && row1[6].contentDescription == "p" ||
+                                    row1[7].tag == "white" && row1[7].contentDescription == "p") {
+                                    null
+                                } else {
+                                    possibleMoves.add(board2d[rowOld][columnOld + 2])
+                                }
+                            }
                         }
                     }
-                    else {
-                        if (row1[3].tag == "white" && row1[3].contentDescription == "p" ||
-                            row1[4].tag == "white" && row1[4].contentDescription == "p" ||
-                            row1[5].tag == "white" && row1[5].contentDescription == "p" ||
-                            row1[6].tag == "white" && row1[6].contentDescription == "p" ||
-                            row1[7].tag == "white" && row1[7].contentDescription == "p") {
-                            null
-                        } else{
-                            possibleMoves.add(board2d[rowOld][columnOld+2])
-                        }
-                    }
-                }
-                if (checker.contentDescription=="K0" && columnOld== 4 &&
-                    (rowOld==0 || rowOld == 7)&& !isThretened(checker,opositeColor) &&
-                    board1d[checker.transitionName.toInt()-4].contentDescription == "r0" &&
-                    board1d[checker.transitionName.toInt()-3].contentDescription == "" &&
-                    !isThretened(board1d[checker.transitionName.toInt()-3],opositeColor) &&
-                    board1d[checker.transitionName.toInt()-2].contentDescription == "" &&
-                    !isThretened(board1d[checker.transitionName.toInt()-2],opositeColor) &&
-                    board1d[checker.transitionName.toInt()-1].contentDescription == "" &&
-                    !isThretened(board1d[checker.transitionName.toInt()-1],opositeColor)) {
-                    if (checker.tag == "white") {
-                        if (row6[1].tag == "black" && row6[1].contentDescription == "p" ||
-                            row6[2].tag == "black" && row6[2].contentDescription == "p" ||
-                            row6[3].tag == "black" && row6[3].contentDescription == "p" ||
-                            row6[4].tag == "black" && row6[4].contentDescription == "p" ||
-                            row6[5].tag == "black" && row6[5].contentDescription == "p"){
-                            null
-                            } else{
-                            possibleMoves.add(board2d[rowOld][columnOld-2])
-                        }
-                    }
-                    else {
-                        if (row1[1].tag == "white" && row1[1].contentDescription == "p" ||
-                            row1[2].tag == "white" && row1[2].contentDescription == "p" ||
-                            row1[3].tag == "white" && row1[3].contentDescription == "p" ||
-                            row1[4].tag == "white" && row1[4].contentDescription == "p" ||
-                            row1[5].tag == "white" && row1[5].contentDescription == "p"){
-                            null
-                            } else{
-                            possibleMoves.add(board2d[rowOld][columnOld-2])
+                    if (board1d[checker.transitionName.toInt() - 4].contentDescription == "r0" &&
+                        board1d[checker.transitionName.toInt() - 3].contentDescription == "" &&
+                        board1d[checker.transitionName.toInt() - 2].contentDescription == "" &&
+                        board1d[checker.transitionName.toInt() - 1].contentDescription == "") {
+                        if (!isThretened(checker, opositeColor) &&
+                            !isThretened(board1d[checker.transitionName.toInt() - 2], opositeColor) &&
+                            !isThretened(board1d[checker.transitionName.toInt() - 1], opositeColor)) {
+                            if (checker.tag == "white") {
+                                if (row6[1].tag == "black" && row6[1].contentDescription == "p" ||
+                                    row6[2].tag == "black" && row6[2].contentDescription == "p" ||
+                                    row6[4].tag == "black" && row6[4].contentDescription == "p"){
+                                    null
+                                } else {
+                                    possibleMoves.add(board2d[rowOld][columnOld - 2])
+                                }
+                            } else {
+                                if (row1[1].tag == "white" && row1[1].contentDescription == "p" ||
+                                    row1[2].tag == "white" && row1[2].contentDescription == "p" ||
+                                    row1[4].tag == "white" && row1[4].contentDescription == "p"){
+                                    null
+                                } else {
+                                    possibleMoves.add(board2d[rowOld][columnOld - 2])
+                                }
+                            }
                         }
                     }
                 }
             }
-
 
             else if (checker.contentDescription == "p"){
                 var num =-1
@@ -718,8 +697,9 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        // Do a move and keep a temp info of the old checker
         fun tempMove (item: ImageButton,item1:ImageButton):TempPiece{
-            var tempPiece=TempPiece("","",4,false, false, false)
+            val tempPiece=TempPiece("","",4,false, false, false)
             if (item.contentDescription=="K0"){tempPiece.K0=true
             }else if (item.contentDescription=="r0"){tempPiece.r0=true}
             tempPiece.tag = item1.tag.toString()
@@ -770,6 +750,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        //reset special moves before going back one move
         fun resetMove(item:ImageButton, item1:ImageButton,tempPiece:TempPiece){
             if (item1.contentDescription == "p" && item1 in row3 && item in row1){
                 row2[row3.indexOf(item1)].scrollBarSize=4
@@ -814,6 +795,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        // go back one move
         fun backMove (item: ImageButton,item1:ImageButton,tempPiece:TempPiece){
             if (tempPiece.K0){item1.contentDescription="K0"
             }else if (tempPiece.r0){item1.contentDescription="r0"
@@ -827,7 +809,7 @@ class MainActivity : AppCompatActivity() {
 
         // checks if king in specified color is under check
         fun isChecked(color :String):Boolean{
-            var otherColor =""
+            var otherColor :String
             if (color =="white"){
                 otherColor = "black"
             }else{
@@ -849,11 +831,12 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        //claculate if position is a checkmate
         fun isCheckmate(color: String):Boolean{
             for (item in board1d){
                 if (item.tag == color){
                     for (item1 in possibleMoves(item)){
-                        var tempPiece = tempMove(item,item1)
+                        val tempPiece = tempMove(item,item1)
 
                         //check if move is ligal
                         if (!isChecked(color)){
@@ -871,11 +854,19 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        //check if position is a draw
         fun isDraw(color:String):Boolean{
+            var i=0
+            //check if only tow kings are left on the board
+            for (item in board1d){
+                if (item.tag!=""&&item.contentDescription!="K"&&item.contentDescription!="K0"){break}
+                i++
+            }
+            if (i==64){return true}
             for (item in board1d){
                 if (item.tag==color) {
                     for (item1 in possibleMoves(item)) {
-                        var tempPiece = tempMove(item,item1)
+                        val tempPiece = tempMove(item,item1)
 
                         if (!isChecked(color)) {
                             resetMove(item, item1,tempPiece)
@@ -915,6 +906,8 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        //recursive function to calculate Max-Min Alpha-Beta prouning algorithem for computer paly
+        // acording to specific depth
         fun moveScore(color:String,score:Int,depth :Int):Int{
             var min = 99999
             var max =-99999
@@ -937,7 +930,7 @@ class MainActivity : AppCompatActivity() {
                 if (item1.tag == color) {
                     for (item2 in possibleMoves(item1)) {
 
-                        var tempPiece = tempMove(item1,item2)
+                        val tempPiece = tempMove(item1,item2)
 
                         if (isChecked(color)){
                             resetMove(item1, item2,tempPiece)
@@ -984,23 +977,32 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        //main function to calculate best move of the computer
         fun bestMove(): BestMove{
             var minMax = 99999
             var maxMin = -999999
             var first = checker00
             var last = checker00
             var index=99
+            var stage =compLvl
             for (item in row5){
                 if (item.scrollBarSize==5){
                     index=row5.indexOf(item)
                 }
             }
+            var i=0
+            for (item in board1d){
+                if (item.tag!=""){i++}
+            }
+
+            if(i<17){stage = compLvl+1}
+            if(i<7){stage=compLvl+2}
 
             for (item1 in boardRandom) {
                 if (item1.tag == "black") {
                     for (item2 in possibleMoves(item1)) {
 
-                        var tempPiece = tempMove(item1,item2)
+                        val tempPiece = tempMove(item1,item2)
                         if (index!=99){row5[index].scrollBarSize=4}
 
                         if (isChecked("white")&&!isChecked("black")) {
@@ -1020,7 +1022,7 @@ class MainActivity : AppCompatActivity() {
                             continue
                         }
 
-                        minMax = moveScore("white", maxMin, compLvl)
+                        minMax = moveScore("white", maxMin, stage)
 
                         if (maxMin < minMax) {
                             maxMin = minMax
@@ -1038,6 +1040,7 @@ class MainActivity : AppCompatActivity() {
             return BestMove(first,last,maxMin,false)
         }
 
+        //Drowing all piaces on the board ecording to its curent status
         fun boardDraw(){
             for (item in board1d){
                 if (item.tag==""){
@@ -1086,13 +1089,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+        //storing each turn board positions in an array
         fun boardStatusStore(){
             boardDraw()
             button_forward.isEnabled=false
             if (sound_switch.isChecked) {
                 mp_move.start()
             }
-            var boardStatus = Array(64){i -> CheckerStatus(board1d[i].tag.toString(),
+            val boardStatus = Array(64){i -> CheckerStatus(board1d[i].tag.toString(),
                 board1d[i].contentDescription.toString(),board1d[i].scrollBarSize)}
             if (boardsStatus.size> boardStatusPointer+1){
                 boardsStatus=boardsStatus.sliceArray(0..boardStatusPointer)
@@ -1103,9 +1108,10 @@ class MainActivity : AppCompatActivity() {
         boardStatusStore()
 
 
+        //main computer play function
         fun computerTurn(){
             counter =0
-            var cordinate: BestMove
+            val cordinate: BestMove
           //  boardRandom.shuffle()
 
             for (item in row2){item.scrollBarSize=4}
@@ -1219,8 +1225,8 @@ class MainActivity : AppCompatActivity() {
         //action when checkers are clicked
         fun checkerClick(checker: ImageButton) {
             //button_new.text=checker.scrollBarSize.toString()
-            var tempData :TempPiece
-            var otherTurn =""
+            val tempData :TempPiece
+            var otherTurn :String
             if (turn == "white"){ otherTurn="black" }else{ otherTurn="white" }
 
             if (checker == tempChecker){
@@ -1388,9 +1394,9 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        //Back Move
+        //Go back one move for each click
         button_back.setOnClickListener {
-            var status=boardStatusPointer-1
+            val status=boardStatusPointer-1
             handPice=noPice
             if (status >-1){
                 var i =0
@@ -1430,8 +1436,9 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        // go forword one move after going backword
         button_forward.setOnClickListener {
-            var status=boardStatusPointer+1
+            val status=boardStatusPointer+1
             handPice=noPice
             if (status <boardsStatus.size){
                 button_back.isEnabled=true
@@ -1479,6 +1486,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        //order computer to play after move backword/forword
         button_play.setOnClickListener {
             if (vsSwitch.isChecked && turn=="black"){
                 textView.text="computer thinking"
@@ -1498,6 +1506,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        // vs computer play on / off toggle
         vsSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (vsSwitch.isChecked) {
                 radio_one.isEnabled=true
@@ -1518,6 +1527,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        //switch the computer level
         radioGroup.setOnCheckedChangeListener { _, _ ->
             if (radio_one.isChecked){
                 compLvl=1
@@ -1530,10 +1540,28 @@ class MainActivity : AppCompatActivity() {
 
         //Start new game
         button_new.setOnClickListener {
-            val i = baseContext.packageManager
-                .getLaunchIntentForPackage(baseContext.packageName)
-            i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(i)
+            if (sound_switch.isChecked){mp_new.start()}
+            boardStatusPointer=0
+            boardsStatus.sliceArray(0..0)
+            turn = "white"
+            var i=0
+            for (item in boardsStatus[0]) {
+                board1d[i].isClickable=true
+                board1d[i].tag = item.tag
+                board1d[i].contentDescription = item.contentDescription
+                board1d[i].scrollBarSize = item.scrollBarSize
+                board1d[i].backgroundTintList = null
+                i++
+            }
+            textView.text = "White move first"
+            boardDraw()
+            button_back.isEnabled=false
+            button_forward.isEnabled=false
+            button_play.isEnabled=false
+
+           // val i = baseContext.packageManager.getLaunchIntentForPackage(baseContext.packageName)
+           // i!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+           // startActivity(i)
         }
     }
 }
