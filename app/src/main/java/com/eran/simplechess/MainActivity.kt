@@ -21,8 +21,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        data class BestMove(var first: ImageButton, var last: ImageButton, var score: Int,
-                            var checkmate: Boolean)
+        data class BestMove(var first: ImageButton, var last: ImageButton)
         data class TempPiece (var tag:String,var contentDescription: String,var scrollBarSize: Int,
                               var K0:Boolean, var r0: Boolean,var q:Boolean)
         data class CheckerStatus(var tag: String, var contentDescription: String,
@@ -887,19 +886,23 @@ class MainActivity : AppCompatActivity() {
             var score=0
             for (item in board1d) {
                 if (item.tag=="black"){
-                    if (item.contentDescription == "K" || item.contentDescription == "K0"){score += 10000}
-                    else if (item.contentDescription == "r" || item.contentDescription == "r0"){score += 525}
-                    else if (item.contentDescription == "q") { score += 1000 }
-                    else if (item.contentDescription == "b") { score += 350 }
-                    else if (item.contentDescription == "k") { score += 350 }
-                    else if (item.contentDescription == "p") { score += 100}
-                } else if (item.tag == "white"){
-                    if (item.contentDescription == "K" || item.contentDescription == "K0"){score -= 10000}
-                    else if (item.contentDescription == "r" || item.contentDescription == "r0"){score -= 525}
-                    else if (item.contentDescription == "q") { score -= 1000 }
-                    else if (item.contentDescription == "b") { score -= 350 }
-                    else if (item.contentDescription == "k") { score -= 350 }
-                    else if (item.contentDescription == "p") { score -= 100 }
+                    when (item.contentDescription){
+                        "p" -> score+=100
+                        "k" -> score+=350
+                        "b" -> score+=350
+                        "r","r0" -> score+=525
+                        "q" -> score+=1000
+                        "K","K0" -> score+=10000
+                    }
+                } else{
+                    when (item.contentDescription){
+                        "p" -> score-=100
+                        "k" -> score-=350
+                        "b" -> score-=350
+                        "r","r0" -> score-=525
+                        "q" -> score-=1000
+                        "K","K0" -> score-=10000
+                    }
                 }
             }
             return score
@@ -1005,17 +1008,6 @@ class MainActivity : AppCompatActivity() {
                         val tempPiece = tempMove(item1,item2)
                         if (index!=99){row5[index].scrollBarSize=4}
 
-                        if (isChecked("white")&&!isChecked("black")) {
-                            if (isCheckmate("white")) {
-                                first = item1
-                                last = item2
-                                resetMove(item1, item2,tempPiece)
-                                backMove(item1,item2,tempPiece)
-                                textView.text = "Computer Checkmate!"
-                                for (item in board1d) { item.isClickable = false }
-                                return BestMove(first, last, maxMin, true)
-                            }
-                        }
                         if (isChecked("black")){// || (isDraw("white")&& boardScore()>1000)){
                             resetMove(item1, item2,tempPiece)
                             backMove(item1,item2,tempPiece)
@@ -1037,54 +1029,35 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             //button_new.text=maxMin.toString()
-            return BestMove(first,last,maxMin,false)
+            return BestMove(first,last)//,maxMin,false)
         }
 
-        //Drowing all piaces on the board ecording to its curent status
-        fun boardDraw(){
-            for (item in board1d){
-                if (item.tag==""){
-                    item.setImageResource(R.drawable.empty)
-                }
-                else if (item.tag=="white"){
-                    if (item.contentDescription=="p"){
-                        item.setImageResource(R.drawable.pawn_white)
+
+        //Drow all piaces on the board according to its current status
+        fun boardDraw() {
+            for (item in board1d) {
+                when (item.tag) {
+                    "white" -> {
+                        when (item.contentDescription) {
+                            "p" -> item.setImageResource(R.drawable.pawn_white)
+                            "q" -> item.setImageResource(R.drawable.queen_white)
+                            "k" -> item.setImageResource(R.drawable.knight_white)
+                            "b" -> item.setImageResource(R.drawable.bishop_white)
+                            "r", "r0" -> item.setImageResource(R.drawable.rock_white)
+                            "K", "K0" -> item.setImageResource(R.drawable.king_white)
+                        }
                     }
-                    else if (item.contentDescription=="q"){
-                        item.setImageResource(R.drawable.queen_white)
+                    "black" -> {
+                        when (item.contentDescription) {
+                            "p" -> item.setImageResource(R.drawable.pawn_black)
+                            "q" -> item.setImageResource(R.drawable.queen_black)
+                            "k" -> item.setImageResource(R.drawable.knight_black)
+                            "b" -> item.setImageResource(R.drawable.bishop_black)
+                            "r", "r0" -> item.setImageResource(R.drawable.rock_black)
+                            "K", "K0" -> item.setImageResource(R.drawable.king_black)
+                        }
                     }
-                    else if (item.contentDescription=="k"){
-                        item.setImageResource(R.drawable.knight_white)
-                    }
-                    else if (item.contentDescription=="b"){
-                        item.setImageResource(R.drawable.bishop_white)
-                    }
-                    else if (item.contentDescription=="r"|| item.contentDescription=="r0"){
-                        item.setImageResource(R.drawable.rock_white)
-                    }
-                    else if (item.contentDescription=="K"|| item.contentDescription=="K0"){
-                        item.setImageResource(R.drawable.king_white)
-                    }
-                }
-                else{
-                    if (item.contentDescription=="p"){
-                        item.setImageResource(R.drawable.pawn_black)
-                    }
-                    else if (item.contentDescription=="q"){
-                        item.setImageResource(R.drawable.queen_black)
-                    }
-                    else if (item.contentDescription=="k"){
-                        item.setImageResource(R.drawable.knight_black)
-                    }
-                    else if (item.contentDescription=="b"){
-                        item.setImageResource(R.drawable.bishop_black)
-                    }
-                    else if (item.contentDescription=="r"|| item.contentDescription=="r0"){
-                        item.setImageResource(R.drawable.rock_black)
-                    }
-                    else if (item.contentDescription=="K"|| item.contentDescription=="K0"){
-                        item.setImageResource(R.drawable.king_black)
-                    }
+                    else -> item.setImageResource(R.drawable.empty)
                 }
             }
         }
@@ -1112,48 +1085,16 @@ class MainActivity : AppCompatActivity() {
         fun computerTurn(){
             counter =0
             val cordinate: BestMove
-          //  boardRandom.shuffle()
+            boardRandom.shuffle()
 
             for (item in row2){item.scrollBarSize=4}
             if (openining ==0){
-                cordinate = BestMove(checker12,checker20,1,false)
+                cordinate = BestMove(checker12,checker20)
                 openining=1
             }else {
                     cordinate = bestMove()
             }
 
-            if (cordinate.checkmate) {
-                if (sound_switch.isChecked) {
-                    mp_loos.start()
-                }
-                handler.postDelayed({
-                    tempMove(cordinate.first,cordinate.last)
-                    for (item in row5){item.scrollBarSize=4}
-
-                    boardStatusStore()
-
-                    for (item in board1d) { item.backgroundTintList = null}
-                    turn = "white"
-
-                    if (isChecked("white")) {
-                        for (item in board1d) {
-                            if ((item.contentDescription == "K" || item.contentDescription == "K0") &&
-                                item.tag == "white"
-                            ) {
-                                item.backgroundTintList = ColorStateList.valueOf(Color.RED)
-                            }
-                        }
-                    }
-                    button_new.isEnabled=true
-                    button_back.isEnabled=true
-                    vsSwitch.isEnabled=true
-                    radio_one.isEnabled=true
-                    radio_two.isEnabled=true
-                    radio_three.isEnabled=true
-                    sound_switch.isEnabled=true
-                }, 500)
-                return
-            }
 
             if (cordinate.first == checker00) {
                 if (sound_switch.isChecked) {
@@ -1162,7 +1103,6 @@ class MainActivity : AppCompatActivity() {
                 textView.text = "Computer surrender!"
                 for (item in board1d) {
                     item.backgroundTintList = null
-                    item.isClickable = false
                 }
                 button_new.isEnabled=true
                 button_back.isEnabled=true
@@ -1195,6 +1135,9 @@ class MainActivity : AppCompatActivity() {
                 turn = "white"
 
                 if (isChecked("white")) {
+                    if (sound_switch.isChecked) {
+                        mp_error.start()
+                    }
                     for (item in board1d) {
                         if ((item.contentDescription == "K" || item.contentDescription == "K0") &&
                             item.tag == "white"
@@ -1204,11 +1147,20 @@ class MainActivity : AppCompatActivity() {
                     }
                     textView.text = "white under check!!"
                 }
-                for (item in board1d){item.isClickable=true}
 
-                if (isDraw("white")){
+                if (isCheckmate("white")) {
+                    if (sound_switch.isChecked) {
+                        mp_loos.start()
+                    }
+                    textView.text = "Computer Checkmate!"
+                }else if (isDraw("white")){
+                    if (sound_switch.isChecked) {
+                        mp_draw.start()
+                    }
                     textView.text = "Draw!"
-                    for (item in board1d){item.isClickable=false}
+                }else{
+                    for (item in board1d){item.isClickable=true}
+
                 }
                 button_new.isEnabled=true
                 button_back.isEnabled=true
@@ -1257,9 +1209,6 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             else if (handPice != noPice && checker in possibleMoves(tempChecker)){
-                if (!vsSwitch.isChecked) {
-                    button_back.isEnabled = true
-                }
                 tempData=tempMove(tempChecker,checker)
                 handPice=noPice
                 for (item in board1d){
@@ -1293,6 +1242,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 boardStatusStore()
+                button_back.isEnabled = true
 
                // checks if oponent is checked
                 if (isChecked(otherTurn)){
@@ -1398,6 +1348,7 @@ class MainActivity : AppCompatActivity() {
         button_back.setOnClickListener {
             val status=boardStatusPointer-1
             handPice=noPice
+            tempChecker = checker00
             if (status >-1){
                 var i =0
                 for (item in boardsStatus[status]){
@@ -1540,6 +1491,8 @@ class MainActivity : AppCompatActivity() {
 
         //Start new game
         button_new.setOnClickListener {
+            handPice=noPice
+            tempChecker = checker00
             if (sound_switch.isChecked){mp_new.start()}
             boardStatusPointer=0
             boardsStatus.sliceArray(0..0)
