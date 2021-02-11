@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
 
             //checks if ways is clear of peaces
             fun checkWay(distance:Int):Boolean{
-                for (n in 1..(distance - 1)) {
+                for (n in 1 until distance) {
                     if (rowDiff > 0 && columnDiff > 0) {
                         if (board2d[rowOld + (rowDiff - n)][columnOld + (columnDiff - n)].tag != "") {
                             return false
@@ -796,9 +796,13 @@ class MainActivity : AppCompatActivity() {
 
         // go back one move
         fun backMove (item: ImageButton,item1:ImageButton,tempPiece:TempPiece){
-            if (tempPiece.K0){item1.contentDescription="K0"
-            }else if (tempPiece.r0){item1.contentDescription="r0"
-            }else if(tempPiece.q){ item1.contentDescription="p"}
+            if (tempPiece.K0) {
+                item1.contentDescription="K0"
+            }else if (tempPiece.r0){
+                item1.contentDescription="r0"
+            }else if(tempPiece.q){
+                item1.contentDescription="p"
+            }
             item.tag = item1.tag
             item.contentDescription = item1.contentDescription
             item1.tag = tempPiece.tag
@@ -1411,7 +1415,7 @@ class MainActivity : AppCompatActivity() {
                             item.backgroundTintList=ColorStateList.valueOf(Color.RED)
                         }
                     }
-                    textView.text= turn + " under check!"
+                    textView.text= "$turn under check!"
                     if (isCheckmate(turn)){
                         for(item in board1d){item.isClickable=false}
                         if (turn=="white"&&vsSwitch.isChecked){
