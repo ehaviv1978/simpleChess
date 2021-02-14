@@ -1,15 +1,11 @@
-package com.eran.simplechess
+ package com.eran.simplechess
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
-import androidx.core.graphics.drawable.toBitmap
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.math.abs
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.media.MediaPlayer
-import android.os.Handler
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,47 +23,89 @@ class MainActivity : AppCompatActivity() {
             checker53,checker54,checker55,checker56,checker57, checker58,checker59,checker60,checker61,
             checker62,checker63)
 
-        val game = ChessGame()
+        var game = ChessGame()
         var handPiece: Int? = null
 
+
+        //Draw chess pieces on board according to game state
         fun drawBord(){
             for (i in 0..63){
                 visualBoard[i].setImageResource(R.drawable.empty)
                 when(game.board1d[i].pieceColor){
-                    PieceColor.white ->{
+                    PieceColor.White ->{
                         when (game.board1d[i].pieceType){
-                            PieceType.K,PieceType.K0 -> visualBoard[i].setImageResource(R.drawable.king_white)
-                            PieceType.Q -> visualBoard[i].setImageResource(R.drawable.queen_white)
-                            PieceType.r, PieceType.r0 -> visualBoard[i].setImageResource(R.drawable.rock_white)
-                            PieceType.n -> visualBoard[i].setImageResource(R.drawable.knight_white)
-                            PieceType.b -> visualBoard[i].setImageResource(R.drawable.bishop_white)
-                            PieceType.p -> visualBoard[i].setImageResource(R.drawable.pawn_white)
+                            PieceType.King,PieceType.King0 -> visualBoard[i].setImageResource(R.drawable.king_white)
+                            PieceType.Queen -> visualBoard[i].setImageResource(R.drawable.queen_white)
+                            PieceType.Rock, PieceType.Rock0 -> visualBoard[i].setImageResource(R.drawable.rock_white)
+                            PieceType.Knight -> visualBoard[i].setImageResource(R.drawable.knight_white)
+                            PieceType.Bishop -> visualBoard[i].setImageResource(R.drawable.bishop_white)
+                            PieceType.Pawn -> visualBoard[i].setImageResource(R.drawable.pawn_white)
                         }
                     }
-                    PieceColor.black ->{
+                    PieceColor.Black ->{
                         when (game.board1d[i].pieceType){
-                            PieceType.K,PieceType.K0 -> visualBoard[i].setImageResource(R.drawable.king_black)
-                            PieceType.Q -> visualBoard[i].setImageResource(R.drawable.queen_black)
-                            PieceType.r, PieceType.r0 -> visualBoard[i].setImageResource(R.drawable.rock_black)
-                            PieceType.n -> visualBoard[i].setImageResource(R.drawable.knight_black)
-                            PieceType.b -> visualBoard[i].setImageResource(R.drawable.bishop_black)
-                            PieceType.p -> visualBoard[i].setImageResource(R.drawable.pawn_black)
+                            PieceType.King,PieceType.King0 -> visualBoard[i].setImageResource(R.drawable.king_black)
+                            PieceType.Queen -> visualBoard[i].setImageResource(R.drawable.queen_black)
+                            PieceType.Rock, PieceType.Rock0 -> visualBoard[i].setImageResource(R.drawable.rock_black)
+                            PieceType.Knight -> visualBoard[i].setImageResource(R.drawable.knight_black)
+                            PieceType.Bishop -> visualBoard[i].setImageResource(R.drawable.bishop_black)
+                            PieceType.Pawn -> visualBoard[i].setImageResource(R.drawable.pawn_black)
                         }
                     }
                 }
             }
         }
 
+        fun colorPossibleMoves(index:Int){
+            if (game.possibleMoves(index).isNotEmpty()){
+                game.possibleMoves(index).forEach{
+                    if (game.board1d[it].pieceType == PieceType.King || game.board1d[it].pieceType == PieceType.King0) {
+                        visualBoard[it].backgroundTintList=ColorStateList.valueOf(Color.RED)
+                    }else if (game.board1d[it].pieceColor!=PieceColor.Non){
+                        visualBoard[it].backgroundTintList=ColorStateList.valueOf(Color.YELLOW)
+                    }else{
+                        visualBoard[it].backgroundTintList=ColorStateList.valueOf(Color.LTGRAY)
+                    }
+                }
+            }
+        }
+
+
+        fun clearBackgroundColor(){
+            for(i in 0..63){
+                visualBoard[i].backgroundTintList=null
+            }
+        }
+
+
         fun checkerClick(checker: ImageButton) {
-            button_new.text= game.moveHistory.size.toString()
             if (handPiece!=null){
-                visualBoard[handPiece!!].backgroundTintList = null
+                if (handPiece==checker.transitionName.toInt()){
+                    clearBackgroundColor()
+                    handPiece= null
+                    return
+                }
+                if (game.board1d[handPiece!!].pieceColor == game.board1d[checker.transitionName.toInt()].pieceColor){
+                    clearBackgroundColor()
+                    checker.backgroundTintList = ColorStateList.valueOf(Color.DKGRAY)
+                    handPiece=checker.transitionName.toInt()
+                    colorPossibleMoves(handPiece!!)
+                    return
+                }
+                if (!game.possibleMoves(handPiece!!).contains(checker.transitionName.toInt())){
+                    return
+                }
+                clearBackgroundColor()
                 game.makeMove(handPiece!!, checker.transitionName.toInt())
                 handPiece=null
                 drawBord()
             }else{
+                if (game.turnColor!= game.board1d[checker.transitionName.toInt()].pieceColor){
+                    return
+                }
                 handPiece=checker.transitionName.toInt()
                 checker.backgroundTintList = ColorStateList.valueOf(Color.DKGRAY)
+                colorPossibleMoves(handPiece!!)
             }
         }
 
@@ -76,12 +114,33 @@ class MainActivity : AppCompatActivity() {
             checker.setOnClickListener {checkerClick(checker)}
         }
 
+
+        fun removeHandPiece(){
+            clearBackgroundColor()
+            if (handPiece!=null){
+                visualBoard[handPiece!!].backgroundTintList=null
+                handPiece=null
+            }
+        }
+
+
         //Go back one move for each click
         button_back.setOnClickListener {
-            if (game.moveHistoryPointer>0){
-                game.moveBack()
-                drawBord()
-            }
+            removeHandPiece()
+            game.moveBack()
+            drawBord()
+        }
+
+        button_forward.setOnClickListener{
+            removeHandPiece()
+            game.moveForward()
+            drawBord()
+        }
+
+        button_new.setOnClickListener{
+            removeHandPiece()
+            game = ChessGame()
+            drawBord()
         }
 
 
