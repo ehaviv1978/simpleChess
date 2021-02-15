@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         var game = ChessGame()
         var handPiece: Int? = null
+        val AI = ChessAI(game, PieceColor.Black)
 
 
         //Draw chess pieces on board according to game state
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
         fun colorPossibleMoves(index:Int){
             if (game.possibleMoves(index).isNotEmpty()){
                 game.possibleMoves(index).forEach{
@@ -71,47 +73,37 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        fun colorCheckPieces(){
+            if (game.isCheck(PieceColor.White)){
+                for (blackPiece in game.blackPieces){
+                    if (game.board1d[blackPiece].pieceType==PieceType.King||game.board1d[blackPiece].pieceType==PieceType.King0){
+                        visualBoard[blackPiece].backgroundTintList=ColorStateList.valueOf(Color.RED)
+                        for (whitPiece in game.whitePieces){
+                            if (blackPiece in game.possibleMoves(whitPiece)){
+                                visualBoard[whitPiece].backgroundTintList=ColorStateList.valueOf(Color.RED)
+                            }
+                        }
+                    }
+                }
+            }else if (game.isCheck(PieceColor.Black)){
+                for (whitePiece in game.whitePieces){
+                    if (game.board1d[whitePiece].pieceType==PieceType.King||game.board1d[whitePiece].pieceType==PieceType.King0){
+                        visualBoard[whitePiece].backgroundTintList=ColorStateList.valueOf(Color.RED)
+                        for (blackPiece in game.blackPieces){
+                            if (whitePiece in game.possibleMoves(blackPiece)){
+                                visualBoard[blackPiece].backgroundTintList=ColorStateList.valueOf(Color.RED)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
         fun clearBackgroundColor(){
             for(i in 0..63){
                 visualBoard[i].backgroundTintList=null
             }
-        }
-
-
-        fun checkerClick(checker: ImageButton) {
-            if (handPiece!=null){
-                if (handPiece==checker.transitionName.toInt()){
-                    clearBackgroundColor()
-                    handPiece= null
-                    return
-                }
-                if (game.board1d[handPiece!!].pieceColor == game.board1d[checker.transitionName.toInt()].pieceColor){
-                    clearBackgroundColor()
-                    checker.backgroundTintList = ColorStateList.valueOf(Color.DKGRAY)
-                    handPiece=checker.transitionName.toInt()
-                    colorPossibleMoves(handPiece!!)
-                    return
-                }
-                if (!game.possibleMoves(handPiece!!).contains(checker.transitionName.toInt())){
-                    return
-                }
-                clearBackgroundColor()
-                game.makeMove(handPiece!!, checker.transitionName.toInt())
-                handPiece=null
-                drawBord()
-            }else{
-                if (game.turnColor!= game.board1d[checker.transitionName.toInt()].pieceColor){
-                    return
-                }
-                handPiece=checker.transitionName.toInt()
-                checker.backgroundTintList = ColorStateList.valueOf(Color.DKGRAY)
-                colorPossibleMoves(handPiece!!)
-            }
-        }
-
-      //  initiate all checkers on click listeners
-        for (checker in visualBoard){
-            checker.setOnClickListener {checkerClick(checker)}
         }
 
 
@@ -124,18 +116,84 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        fun computerMove(){
+            AI.makeMove()
+            drawBord()
+        }
+
+        fun checkerClick(checker: ImageButton) {
+            if (handPiece!=null){
+                if (handPiece==checker.transitionName.toInt()){
+                    clearBackgroundColor()
+                    handPiece= null
+                    colorCheckPieces()
+                    return
+                }
+                if (game.board1d[handPiece!!].pieceColor == game.board1d[checker.transitionName.toInt()].pieceColor){
+                    clearBackgroundColor()
+                    checker.backgroundTintList = ColorStateList.valueOf(Color.DKGRAY)
+                    handPiece=checker.transitionName.toInt()
+                    colorPossibleMoves(handPiece!!)
+                    colorCheckPieces()
+                    return
+                }
+                if (!game.possibleMoves(handPiece!!).contains(checker.transitionName.toInt())){
+                    return
+                }
+                game.makeMove(handPiece!!, checker.transitionName.toInt())
+                if (game.isCheck(game.otherColor(game.board1d[checker.transitionName.toInt()].pieceColor))){
+                    colorCheckPieces()
+                    game.moveBack()
+                    textGameInfo.text = "Illegal Move!!!"
+                    return
+                }
+                clearBackgroundColor()
+                handPiece=null
+                drawBord()
+                if (vsSwitch.isChecked){
+                    computerMove()
+                }
+                if (game.isCheck(game.board1d[checker.transitionName.toInt()].pieceColor)){
+                    colorCheckPieces()
+                    if (game.isCheckmate(game.board1d[checker.transitionName.toInt()].pieceColor)){
+                        textGameInfo.text = game.board1d[checker.transitionName.toInt()].pieceColor.toString() + " Checkmate!"
+                    }else {
+                        textGameInfo.text = game.board1d[checker.transitionName.toInt()].pieceColor.toString() + " Check!"
+                    }
+                }
+            }else{
+                if (game.turnColor!= game.board1d[checker.transitionName.toInt()].pieceColor){
+                    return
+                }
+                handPiece=checker.transitionName.toInt()
+                checker.backgroundTintList = ColorStateList.valueOf(Color.DKGRAY)
+                colorPossibleMoves(handPiece!!)
+            }
+        }
+
+
+      //  initiate all checkers on click listeners
+        for (checker in visualBoard){
+            checker.setOnClickListener {checkerClick(checker)}
+        }
+
+
         //Go back one move for each click
         button_back.setOnClickListener {
             removeHandPiece()
             game.moveBack()
             drawBord()
+            colorCheckPieces()
         }
+
 
         button_forward.setOnClickListener{
             removeHandPiece()
             game.moveForward()
             drawBord()
+            colorCheckPieces()
         }
+
 
         button_new.setOnClickListener{
             removeHandPiece()
