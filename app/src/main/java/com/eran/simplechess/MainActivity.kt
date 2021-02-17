@@ -15,6 +15,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        vsSwitch.isChecked= true
+        button_back.isEnabled=false
+        button_play.isEnabled=false
+        button_forward.isEnabled=false
+
         val handler = Handler()
 
         val visualBoard = arrayOf(checker0,checker1,checker2, checker3,checker4,checker5, checker6, checker7,
@@ -29,7 +34,15 @@ class MainActivity : AppCompatActivity() {
         var game = ChessGame()
         var handPiece: Int? = null
         val computerColor = PieceColor.Black
-        var computerAI = ChessAI(game, computerColor)
+        var computerAI = ChessAI(
+            game, computerColor, if (radio_one.isChecked) {
+                2
+            } else if (radio_two.isChecked) {
+                3
+            } else {
+                4
+            }
+        )
 
 
         //Draw chess pieces on board according to game state
@@ -78,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
 
         fun colorCheckPieces(){
-            if (game.isCheck(PieceColor.White)){
+            if (game.isDoingCheck(PieceColor.White)){
                 for (blackPiece in game.blackPieces){
                     if (game.board1d[blackPiece].pieceType==PieceType.King||game.board1d[blackPiece].pieceType==PieceType.King0){
                         visualBoard[blackPiece].backgroundTintList=ColorStateList.valueOf(Color.RED)
@@ -89,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-            }else if (game.isCheck(PieceColor.Black)){
+            }else if (game.isDoingCheck(PieceColor.Black)){
                 for (whitePiece in game.whitePieces){
                     if (game.board1d[whitePiece].pieceType==PieceType.King||game.board1d[whitePiece].pieceType==PieceType.King0){
                         visualBoard[whitePiece].backgroundTintList=ColorStateList.valueOf(Color.RED)
@@ -135,33 +148,40 @@ class MainActivity : AppCompatActivity() {
             var computerMove = computerAI.makeMove()
             lockBoard()
             if(computerMove.first==99){
-                lockBoard()
                 textGameInfo.text="Draw!!"
+                return
             }
             clearBackgroundColor()
-            visualBoard[computerMove.first].backgroundTintList =ColorStateList.valueOf(Color.YELLOW)
-            visualBoard[computerMove.last].backgroundTintList =ColorStateList.valueOf(Color.YELLOW)
+            visualBoard[computerMove.first].backgroundTintList =
+                ColorStateList.valueOf(Color.YELLOW)
+            visualBoard[computerMove.last].backgroundTintList = ColorStateList.valueOf(Color.YELLOW)
             handler.postDelayed({
                 drawBord()
                 handler.postDelayed({
                     visualBoard[computerMove.first].backgroundTintList = null
-                    visualBoard[computerMove.last].backgroundTintList =null
+                    visualBoard[computerMove.last].backgroundTintList = null
                     colorCheckPieces()
-                },200)
+                }, 200)
                 unlockBoard()
-                if (game.isCheck(computerColor)){
-                    if (game.isCheckmate(computerColor)){
+                if (game.isDoingCheck(computerColor)) {
+                    if (game.isDoingCheckmate(computerColor)) {
                         lockBoard()
-                        textGameInfo.text="Computer Checkmate!!"
-                    }else{
-                        textGameInfo.text="Computer Check!!"
+                        textGameInfo.text = "Computer Checkmate!!"
+                    } else {
+                        textGameInfo.text = "Computer Check!!"
                     }
-                }else{
-                    textGameInfo.text="White Turn"
+                } else {
+                    if (game.isDraw(PieceColor.White)){
+                        lockBoard()
+                        textGameInfo.text="Draw!!"
+                    }else{
+                        textGameInfo.text = "White Turn"
+                    }
                 }
+            }, 400)
 
-            },400)
-
+            button_back.isEnabled = true
+            button_forward.isEnabled = false
         }
 
         fun checkerClick(checker: ImageButton) {
@@ -184,7 +204,9 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
                 game.makeMove(handPiece!!, checker.transitionName.toInt())
-                if (game.isCheck(game.otherColor(game.board1d[checker.transitionName.toInt()].pieceColor))){
+                button_back.isEnabled= true
+                button_forward.isEnabled=false
+                if (game.isDoingCheck(game.otherColor(game.board1d[checker.transitionName.toInt()].pieceColor))){
                     colorCheckPieces()
                     game.moveBack()
                     textGameInfo.text = "Illegal Move!!!"
@@ -193,21 +215,28 @@ class MainActivity : AppCompatActivity() {
                 clearBackgroundColor()
                 handPiece=null
                 drawBord()
+                if (game.isDoingCheck(game.board1d[checker.transitionName.toInt()].pieceColor)){
+                    colorCheckPieces()
+                    if (game.isDoingCheckmate(game.board1d[checker.transitionName.toInt()].pieceColor)){
+                        lockBoard()
+                        textGameInfo.text = game.board1d[checker.transitionName.toInt()].pieceColor.toString() + " Checkmate!"
+                        return
+                    }else {
+                        textGameInfo.text = game.board1d[checker.transitionName.toInt()].pieceColor.toString() + " Check!"
+                    }
+                }else{
+                    if (game.isDraw(game.turnColor)){
+                        lockBoard()
+                        textGameInfo.text="Draw!!"
+                        return
+                    }
+                }
                 if (vsSwitch.isChecked){
                     textGameInfo.text="Computer thinking..."
                     handler.postDelayed({
                         computerMove()
                     },10)
                     return
-                }
-                if (game.isCheck(game.board1d[checker.transitionName.toInt()].pieceColor)){
-                    colorCheckPieces()
-                    if (game.isCheckmate(game.board1d[checker.transitionName.toInt()].pieceColor)){
-                        lockBoard()
-                        textGameInfo.text = game.board1d[checker.transitionName.toInt()].pieceColor.toString() + " Checkmate!"
-                    }else {
-                        textGameInfo.text = game.board1d[checker.transitionName.toInt()].pieceColor.toString() + " Check!"
-                    }
                 }else{
                     textGameInfo.text = game.turnColor.toString() + " Turn"
                 }
@@ -235,9 +264,9 @@ class MainActivity : AppCompatActivity() {
             game.moveBack()
             drawBord()
             colorCheckPieces()
-            if (game.isCheck(game.otherColor(game.turnColor))){
+            if (game.isDoingCheck(game.otherColor(game.turnColor))){
                 colorCheckPieces()
-                if (game.isCheckmate(game.otherColor(game.turnColor))){
+                if (game.isDoingCheckmate(game.otherColor(game.turnColor))){
                     lockBoard()
                     textGameInfo.text = game.otherColor(game.turnColor).toString() + " Checkmate!"
                 }else {
@@ -245,6 +274,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }else{
                 textGameInfo.text = game.turnColor.toString() + " Turn"
+            }
+            button_forward.isEnabled=true
+            if(game.moveHistoryPointer==0){
+                button_back.isEnabled=false
+            }
+            if (game.turnColor==computerColor && vsSwitch.isChecked){
+                textGameInfo.text = "Press '>' for computer to play"
+                button_play.isEnabled= true
+            }else{
+                button_play.isEnabled= false
             }
         }
 
@@ -254,9 +293,9 @@ class MainActivity : AppCompatActivity() {
             game.moveForward()
             drawBord()
             colorCheckPieces()
-            if (game.isCheck(game.otherColor(game.turnColor))){
+            if (game.isDoingCheck(game.otherColor(game.turnColor))){
                 colorCheckPieces()
-                if (game.isCheckmate(game.otherColor(game.turnColor))){
+                if (game.isDoingCheckmate(game.otherColor(game.turnColor))){
                     lockBoard()
                     textGameInfo.text = game.otherColor(game.turnColor).toString() + " Checkmate!"
                 }else {
@@ -265,16 +304,53 @@ class MainActivity : AppCompatActivity() {
             }else{
                 textGameInfo.text = game.turnColor.toString() + " Turn"
             }
+            if (game.moveHistoryPointer>game.moveHistory.size-2){
+                button_forward.isEnabled=false
+            }
+            button_back.isEnabled=true
+            if (game.turnColor==computerColor && vsSwitch.isChecked){
+                textGameInfo.text = "Press '>' for computer to play"
+                button_play.isEnabled= true
+            }else{
+                button_play.isEnabled= false
+            }
         }
 
 
         button_new.setOnClickListener{
+            button_play.isEnabled=false
+            button_back.isEnabled=false
+            button_forward.isEnabled=false
+            textGameInfo.text ="White move first"
             removeHandPiece()
             game = ChessGame()
-            computerAI = ChessAI(game, PieceColor.Black)
+            computerAI = ChessAI(game, PieceColor.Black,computerAI.compLvl)
             drawBord()
         }
 
+
+        //switch the computer level
+        radioGroup.setOnCheckedChangeListener { _, _ ->
+            if (radio_one.isChecked){
+                computerAI.compLvl=2
+            }else if (radio_two.isChecked){
+                computerAI.compLvl=3
+            }else{
+                computerAI.compLvl=4
+            }
+        }
+
+
+        //order computer to play after move backword/forword
+        button_play.setOnClickListener {
+            if (vsSwitch.isChecked && game.turnColor==computerColor){
+                button_play.isEnabled= false
+                textGameInfo.text="Computer thinking..."
+                handler.postDelayed({
+                    computerMove()
+                },10)
+            }
+        }
 
 //        data class BestMove(var first: ImageButton, var last: ImageButton)
 //        data class TempPiece (var tag:String,var contentDescription: String,var scrollBarSize: Int,

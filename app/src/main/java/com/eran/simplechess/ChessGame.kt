@@ -67,7 +67,7 @@ class ChessGame {
     }
 
 
-    fun newBoard(){
+    private fun newBoard(){
         for (i in 0..63){
             board1d[i].enPassant=false
             board1d[i].pieceColor = PieceColor.Non
@@ -127,7 +127,7 @@ class ChessGame {
     }
 
 
-    fun removeEnPassant(){
+    private fun removeEnPassant(){
         for (i in 16..23){
             board1d[i].enPassant=false
         }
@@ -210,7 +210,7 @@ class ChessGame {
 
 
     // checks if specific square is under attack
-    fun isThreatened(i: Int, color: PieceColor): Boolean {
+    private fun isThreatened(i: Int, color: PieceColor): Boolean {
         if (color == PieceColor.White) {
             whitePieces.forEach {
                 if (isValidMove(it, i)) {
@@ -229,7 +229,40 @@ class ChessGame {
     }
 
 
-    fun isCheck(color: PieceColor): Boolean{
+    fun isDraw(color: PieceColor): Boolean{
+        var tempHistory = moveHistory.copyOf()
+        if (color == PieceColor.Black){
+            for (piece in blackPieces){
+                for (move in possibleMoves(piece)){
+                    makeMove(piece,move)
+                    if (!isDoingCheck(PieceColor.White)) {
+                        moveBack()
+                        moveHistory=tempHistory.copyOf()
+                        return false
+                    }
+                    moveBack()
+                }
+            }
+            moveHistory=tempHistory.copyOf()
+            return true
+        }else{
+            for (piece in whitePieces){
+                for (move in possibleMoves(piece)){
+                    makeMove(piece,move)
+                    if (!isDoingCheck(PieceColor.Black)) {
+                        moveBack()
+                        moveHistory=tempHistory.copyOf()
+                        return false
+                    }
+                    moveBack()
+                }
+            }
+            moveHistory=tempHistory.copyOf()
+            return true
+        }
+    }
+
+    fun isDoingCheck(color: PieceColor): Boolean{
         if (color == PieceColor.Black){
             for (piece in whitePieces) {
                 if (board1d[piece].pieceType==PieceType.King || board1d[piece].pieceType==PieceType.King0){
@@ -247,7 +280,7 @@ class ChessGame {
     }
 
 
-    fun isCheckmate(color: PieceColor): Boolean{
+    fun isDoingCheckmate(color: PieceColor): Boolean{
         var tempHistory = moveHistory.copyOf()
         val pieces = if (color ==PieceColor.Black) {
             whitePieces
@@ -258,18 +291,15 @@ class ChessGame {
         for (piece in pieces.toList()) {
             for (move in possibleMoves(piece)) {
                 makeMove(piece, move)
-                if (!isCheck(color)) {
+                if (!isDoingCheck(color)) {
                     moveBack()
-                    //moveHistory = moveHistory.sliceArray(0 until moveHistoryPointer + 1)
                     moveHistory=tempHistory.copyOf()
                     return false
                 }
                 moveBack()
             }
         }
-
         moveHistory=tempHistory.copyOf()
-        //moveHistory=moveHistory.sliceArray(0 until moveHistoryPointer+1)
         return true
     }
 
@@ -724,12 +754,6 @@ class ChessGame {
         }
         return possibleMoves.toIntArray()
     }
-
-
-//    fun isValidMove(first: Int, Last: Int):Boolean{
-//        return (possibleMoves(first).contains(Last))
-//        //return false
-//    }
 
 
     fun isValidMove(first: Int, second: Int):Boolean{
