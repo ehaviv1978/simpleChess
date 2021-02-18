@@ -232,7 +232,7 @@ class ChessGame {
     fun isDraw(color: PieceColor): Boolean{
         var tempHistory = moveHistory.copyOf()
         if (color == PieceColor.Black){
-            for (piece in blackPieces){
+            for (piece in blackPieces.toList()){
                 for (move in possibleMoves(piece)){
                     makeMove(piece,move)
                     if (!isDoingCheck(PieceColor.White)) {
@@ -246,7 +246,7 @@ class ChessGame {
             moveHistory=tempHistory.copyOf()
             return true
         }else{
-            for (piece in whitePieces){
+            for (piece in whitePieces.toList()){
                 for (move in possibleMoves(piece)){
                     makeMove(piece,move)
                     if (!isDoingCheck(PieceColor.Black)) {

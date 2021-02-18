@@ -6,11 +6,14 @@ import android.widget.ImageButton
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Handler
+import androidx.annotation.RequiresApi
 
 
 class MainActivity : AppCompatActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,15 +37,7 @@ class MainActivity : AppCompatActivity() {
         var game = ChessGame()
         var handPiece: Int? = null
         val computerColor = PieceColor.Black
-        var computerAI = ChessAI(
-            game, computerColor, if (radio_one.isChecked) {
-                2
-            } else if (radio_two.isChecked) {
-                3
-            } else {
-                4
-            }
-        )
+        var computerAI = ChessAI(game, computerColor, 2)
 
 
         //Draw chess pieces on board according to game state
@@ -144,11 +139,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+        fun disableButtons(){
+            button_play.isEnabled=false
+            button_back.isEnabled=false
+            button_forward.isEnabled=false
+            button_play.imageTintList= ColorStateList.valueOf(Color.parseColor("#ffff8800"))
+            button_forward.imageTintList = ColorStateList.valueOf(Color.parseColor("#ffff8800"))
+            button_back.imageTintList= ColorStateList.valueOf(Color.parseColor("#ffff8800"))
+        }
+
+
         fun computerMove(){
             var computerMove = computerAI.makeMove()
             lockBoard()
             if(computerMove.first==99){
-                textGameInfo.text="Draw!!"
+                textGameInfo.text="Computer surrender - You Won!!"
+                button_back.isEnabled=true
+                button_back.imageTintList= null
                 return
             }
             clearBackgroundColor()
@@ -181,7 +189,9 @@ class MainActivity : AppCompatActivity() {
             }, 400)
 
             button_back.isEnabled = true
+            button_back.imageTintList = null
             button_forward.isEnabled = false
+            button_forward.imageTintList=ColorStateList.valueOf(Color.parseColor("#ffff8800"))
         }
 
         fun checkerClick(checker: ImageButton) {
@@ -205,7 +215,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 game.makeMove(handPiece!!, checker.transitionName.toInt())
                 button_back.isEnabled= true
+                button_back.imageTintList =null
                 button_forward.isEnabled=false
+                button_forward.imageTintList = ColorStateList.valueOf(Color.parseColor("#ffff8800"))
                 if (game.isDoingCheck(game.otherColor(game.board1d[checker.transitionName.toInt()].pieceColor))){
                     colorCheckPieces()
                     game.moveBack()
@@ -230,16 +242,18 @@ class MainActivity : AppCompatActivity() {
                         textGameInfo.text="Draw!!"
                         return
                     }
+                    textGameInfo.text = game.turnColor.toString() + " Turn"
                 }
-                if (vsSwitch.isChecked){
+                if (vsSwitch.isChecked && game.turnColor==computerColor){
+                    disableButtons()
                     textGameInfo.text="Computer thinking..."
                     handler.postDelayed({
                         computerMove()
                     },10)
                     return
-                }else{
-                    textGameInfo.text = game.turnColor.toString() + " Turn"
-                }
+                }//else{
+                   // textGameInfo.text = game.turnColor.toString() + " Turn"
+                //}
             }else{
                 if (game.turnColor!= game.board1d[checker.transitionName.toInt()].pieceColor){
                     return
@@ -276,14 +290,18 @@ class MainActivity : AppCompatActivity() {
                 textGameInfo.text = game.turnColor.toString() + " Turn"
             }
             button_forward.isEnabled=true
+            button_forward.imageTintList=null
             if(game.moveHistoryPointer==0){
                 button_back.isEnabled=false
+                button_back.imageTintList=ColorStateList.valueOf(Color.parseColor("#ffff8800"))
             }
             if (game.turnColor==computerColor && vsSwitch.isChecked){
                 textGameInfo.text = "Press '>' for computer to play"
                 button_play.isEnabled= true
+                button_play.imageTintList=null
             }else{
                 button_play.isEnabled= false
+                button_play.imageTintList=ColorStateList.valueOf(Color.parseColor("#ffff8800"))
             }
         }
 
@@ -306,13 +324,17 @@ class MainActivity : AppCompatActivity() {
             }
             if (game.moveHistoryPointer>game.moveHistory.size-2){
                 button_forward.isEnabled=false
+                button_forward.imageTintList = ColorStateList.valueOf(Color.parseColor("#ffff8800"))
             }
             button_back.isEnabled=true
+            button_back.imageTintList=null
             if (game.turnColor==computerColor && vsSwitch.isChecked){
                 textGameInfo.text = "Press '>' for computer to play"
                 button_play.isEnabled= true
+                button_play.imageTintList = null
             }else{
                 button_play.isEnabled= false
+                button_play.imageTintList = ColorStateList.valueOf(Color.parseColor("#ffff8800"))
             }
         }
 
@@ -321,22 +343,26 @@ class MainActivity : AppCompatActivity() {
             button_play.isEnabled=false
             button_back.isEnabled=false
             button_forward.isEnabled=false
+            button_play.imageTintList= ColorStateList.valueOf(Color.parseColor("#ffff8800"))
+            button_forward.imageTintList = ColorStateList.valueOf(Color.parseColor("#ffff8800"))
+            button_back.imageTintList= ColorStateList.valueOf(Color.parseColor("#ffff8800"))
             textGameInfo.text ="White move first"
             removeHandPiece()
             game = ChessGame()
             computerAI = ChessAI(game, PieceColor.Black,computerAI.compLvl)
             drawBord()
+            unlockBoard()
         }
 
 
         //switch the computer level
         radioGroup.setOnCheckedChangeListener { _, _ ->
             if (radio_one.isChecked){
-                computerAI.compLvl=2
+                computerAI.compLvl=1
             }else if (radio_two.isChecked){
-                computerAI.compLvl=3
+                computerAI.compLvl=2
             }else{
-                computerAI.compLvl=4
+                computerAI.compLvl=3
             }
         }
 
@@ -344,11 +370,30 @@ class MainActivity : AppCompatActivity() {
         //order computer to play after move backword/forword
         button_play.setOnClickListener {
             if (vsSwitch.isChecked && game.turnColor==computerColor){
-                button_play.isEnabled= false
+                disableButtons()
                 textGameInfo.text="Computer thinking..."
                 handler.postDelayed({
                     computerMove()
                 },10)
+            }
+        }
+
+
+        // vs computer play on / off toggle
+        vsSwitch.setOnCheckedChangeListener { _, _ ->
+            if (vsSwitch.isChecked) {
+                if (game.turnColor==computerColor){
+                    disableButtons()
+                    textGameInfo.text="Computer thinking..."
+                    handler.postDelayed({
+                        computerMove()
+                    },10)
+                }
+
+            }else{
+                button_play.isEnabled=false
+                button_play.imageTintList= ColorStateList.valueOf(Color.parseColor("#ffff8800"))
+                textGameInfo.text =game.turnColor.toString() +" turn"
             }
         }
 
@@ -1841,4 +1886,5 @@ class MainActivity : AppCompatActivity() {
 //           // startActivity(i)
 //        }
     }
+
 }

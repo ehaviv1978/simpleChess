@@ -4,17 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/background_dark"
     tools:context=".MainActivity">
 
         <Switch
             android:id="@+id/vsSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="74dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:text="VS Computer"
+            android:textColor="@android:color/darker_gray"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/radioGroup" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/checker00"
@@ -755,7 +758,7 @@
             android:id="@+id/checker5"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:background="#A22E01"
             android:contentDescription="b"
             android:tag="black"
@@ -763,14 +766,14 @@
             app:layout_constraintBottom_toTopOf="@+id/checker13"
             app:layout_constraintEnd_toStartOf="@+id/checker6"
             app:layout_constraintStart_toEndOf="@+id/checker4"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/radioGroup"
             app:srcCompat="@drawable/bishop_black" />
 
         <ImageButton
             android:id="@+id/checker7"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="8dp"
             android:background="#A22E01"
             android:contentDescription="r0"
@@ -779,14 +782,14 @@
             app:layout_constraintBottom_toTopOf="@+id/checker15"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/checker6"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/radioGroup"
             app:srcCompat="@drawable/rock_black" />
 
         <ImageButton
             android:id="@+id/checker6"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:background="#FDE0CE"
             android:contentDescription="k"
             android:tag="black"
@@ -794,14 +797,14 @@
             app:layout_constraintBottom_toTopOf="@+id/checker14"
             app:layout_constraintEnd_toStartOf="@+id/checker7"
             app:layout_constraintStart_toEndOf="@+id/checker5"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/radioGroup"
             app:srcCompat="@drawable/knight_black" />
 
         <ImageButton
             android:id="@+id/checker4"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:background="#FDE0CE"
             android:contentDescription="K0"
             android:tag="black"
@@ -809,14 +812,14 @@
             app:layout_constraintBottom_toTopOf="@+id/checker12"
             app:layout_constraintEnd_toStartOf="@+id/checker5"
             app:layout_constraintStart_toEndOf="@+id/checker3"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/radioGroup"
             app:srcCompat="@drawable/king_black" />
 
         <ImageButton
             android:id="@+id/checker2"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:background="#FDE0CE"
             android:contentDescription="b"
             android:tag="black"
@@ -824,14 +827,14 @@
             app:layout_constraintBottom_toTopOf="@+id/checker10"
             app:layout_constraintEnd_toStartOf="@+id/checker3"
             app:layout_constraintStart_toEndOf="@+id/checker1"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/radioGroup"
             app:srcCompat="@drawable/bishop_black" />
 
         <ImageButton
             android:id="@+id/checker3"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:background="#A22E01"
             android:contentDescription="q"
             android:tag="black"
@@ -839,14 +842,14 @@
             app:layout_constraintBottom_toTopOf="@+id/checker11"
             app:layout_constraintEnd_toStartOf="@+id/checker4"
             app:layout_constraintStart_toEndOf="@+id/checker2"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/radioGroup"
             app:srcCompat="@drawable/queen_black" />
 
         <ImageButton
             android:id="@+id/checker1"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:background="#A22E01"
             android:contentDescription="k"
             android:tag="black"
@@ -854,7 +857,7 @@
             app:layout_constraintBottom_toTopOf="@+id/checker9"
             app:layout_constraintEnd_toStartOf="@+id/checker2"
             app:layout_constraintStart_toEndOf="@+id/checker0"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/radioGroup"
             app:srcCompat="@drawable/knight_black" />
 
         <ImageButton
@@ -862,7 +865,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:background="#FDE0CE"
             android:contentDescription="r0"
             android:tag="black"
@@ -870,17 +873,18 @@
             app:layout_constraintBottom_toTopOf="@+id/checker8"
             app:layout_constraintEnd_toStartOf="@+id/checker1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/radioGroup"
             app:srcCompat="@drawable/rock_black" />
 
         <Button
             android:id="@+id/button_new"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="24dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="#CCCCD5"
+            android:backgroundTint="@android:color/holo_red_light"
             android:text="New Game"
+            android:textColor="@android:color/background_light"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -889,24 +893,27 @@
             android:id="@+id/textGameInfo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="white moves first"
-            android:textColor="#BB5A5A"
+            android:textColor="@android:color/darker_gray"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/checker60" />
 
-        <Button
+        <ImageButton
             android:id="@+id/button_back"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginBottom="8dp"
-            android:text="&lt;&lt;"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:scaleType="center"
+            android:src="@android:drawable/ic_media_rew"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:tint="@android:color/holo_orange_dark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_play" />
 
@@ -914,62 +921,77 @@
             android:id="@+id/sound_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="18dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:text="Sound"
+            android:textColor="@android:color/darker_gray"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/button_new"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <RadioGroup
             android:id="@+id/radioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vsSwitch">
 
                 <RadioButton
                     android:id="@+id/radio_one"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="level 1" />
+                    android:buttonTint="@android:color/darker_gray"
+                    android:text="level 1"
+                    android:textColor="@android:color/darker_gray" />
 
                 <RadioButton
                     android:id="@+id/radio_two"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:buttonTint="@android:color/darker_gray"
                     android:checked="true"
-                    android:text="level 2" />
+                    android:text="level 2"
+                    android:textColor="@android:color/darker_gray" />
 
                 <RadioButton
                     android:id="@+id/radio_three"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="level 3" />
+                    android:buttonTint="@android:color/darker_gray"
+                    android:text="level 3"
+                    android:textColor="@android:color/darker_gray" />
 
         </RadioGroup>
 
-        <Button
+        <ImageButton
             android:id="@+id/button_forward"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="8dp"
-            android:text="&gt;&gt;"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:scaleType="center"
+            android:src="@android:drawable/ic_media_ff"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:tint="@android:color/holo_orange_dark"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/radioGroup" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <Button
+        <ImageButton
             android:id="@+id/button_play"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginBottom="8dp"
-            android:text="&gt;"
-            android:textSize="24sp"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:scaleType="centerInside"
+            android:src="@android:drawable/ic_media_play"
+            android:textSize="8sp"
             android:textStyle="bold"
+            android:tint="@android:color/holo_orange_dark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button_forward" />
 
