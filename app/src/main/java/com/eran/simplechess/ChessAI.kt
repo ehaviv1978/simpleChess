@@ -63,8 +63,8 @@ class ChessAI (private val game: ChessGame, private val colorAI: PieceColor, var
 
     private fun bestMove(color: PieceColor, score: Int, depth: Int): Int {
         val oppositeColor = if (color==PieceColor.White) PieceColor.Black else PieceColor.White
-        var bestMoveScore =  if (color==PieceColor.White) 99999 else -99999
-        var pieces = if (color==PieceColor.White) game.whitePieces.toList() else game.blackPieces.toList()
+        var bestMoveScore = if (color==PieceColor.White) 99999 else -99999
+        val pieces = if (color==PieceColor.White) game.whitePieces.toList() else game.blackPieces.toList()
 
         for (index in pieces) {
             for (index2 in game.possibleMoves(index)) {
@@ -73,7 +73,7 @@ class ChessAI (private val game: ChessGame, private val colorAI: PieceColor, var
                     game.moveBack()
                     continue
                 }
-                var tempScore = if (depth > 1) bestMove(oppositeColor, bestMoveScore, depth - 1) else boardScore()
+                val tempScore = if (depth > 1) bestMove(oppositeColor, bestMoveScore, depth - 1) else boardScore()
                 if (color==PieceColor.White){
                     if (tempScore <= score) {
                         game.moveBack()
