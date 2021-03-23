@@ -1,5 +1,7 @@
 package com.eran.simplechess
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
@@ -10,9 +12,12 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.Handler
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 
 
 class MainActivity : AppCompatActivity() {
+
+    private val sharedPrefFile = "com.eran.simplechess.theme"
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +28,9 @@ class MainActivity : AppCompatActivity() {
         button_back.isEnabled = false
         button_play.isEnabled = false
         button_forward.isEnabled = false
+
+        val sharedPreferences: SharedPreferences = this.getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
+        var isDarkTheme = sharedPreferences.getBoolean("themeDark_key", true)
 
         val handler = Handler()
 
@@ -96,7 +104,8 @@ class MainActivity : AppCompatActivity() {
         var game = ChessGame()
         var handPiece: Int? = null
         val computerColor = PieceColor.Black
-        var computerAI = ChessAI(game, computerColor, 2)
+        var maxComputerLvl = 3
+        var computerAI = ChessAI(game, computerColor, maxComputerLvl-1)
 
         val mpError = MediaPlayer.create(this, R.raw.error)
         val mpMove = MediaPlayer.create(this, R.raw.click)
@@ -104,6 +113,50 @@ class MainActivity : AppCompatActivity() {
         val mpLoos = MediaPlayer.create(this, R.raw.computer_win)
         val mpDraw = MediaPlayer.create(this, R.raw.draw)
         val mpNew = MediaPlayer.create(this, R.raw.new_game)
+
+        fun theme(isDark : Boolean){
+            if (isDark) {
+                button_theme.text = "Light"
+                mainView.setBackgroundColor(Color.BLACK)
+                textGameInfo.setTextColor(Color.LTGRAY)
+                sound_switch.setTextColor(Color.LTGRAY)
+                sound_switch.trackTintList = ColorStateList.valueOf(Color.LTGRAY)
+                vsSwitch.setTextColor(Color.LTGRAY)
+                vsSwitch.trackTintList = ColorStateList.valueOf(Color.LTGRAY)
+                radio_one.setTextColor(Color.LTGRAY)
+                radio_two.setTextColor(Color.LTGRAY)
+                radio_three.setTextColor(Color.LTGRAY)
+                radio_one.buttonTintList = ColorStateList.valueOf(Color.LTGRAY)
+                radio_two.buttonTintList = ColorStateList.valueOf(Color.LTGRAY)
+                radio_three.buttonTintList = ColorStateList.valueOf(Color.LTGRAY)
+                isDarkTheme = true
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.putBoolean("themeDark_key", isDarkTheme)
+                editor.apply()
+                editor.commit()
+            } else {
+                button_theme.text = "Dark"
+                mainView.setBackgroundColor(Color.WHITE)
+                textGameInfo.setTextColor(Color.BLACK)
+                sound_switch.setTextColor(Color.BLACK)
+                sound_switch.trackTintList = ColorStateList.valueOf(Color.DKGRAY)
+                vsSwitch.setTextColor(Color.BLACK)
+                vsSwitch.trackTintList = ColorStateList.valueOf(Color.DKGRAY)
+                radio_one.setTextColor(Color.BLACK)
+                radio_two.setTextColor(Color.BLACK)
+                radio_three.setTextColor(Color.BLACK)
+                radio_one.buttonTintList = ColorStateList.valueOf(Color.GRAY)
+                radio_two.buttonTintList = ColorStateList.valueOf(Color.GRAY)
+                radio_three.buttonTintList = ColorStateList.valueOf(Color.GRAY)
+                isDarkTheme = false
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                editor.putBoolean("themeDark_key", isDarkTheme)
+                editor.apply()
+                editor.commit()
+            }
+        }
+
+        theme(isDarkTheme)
 
 
         //Draw chess pieces on board according to game state
@@ -463,11 +516,11 @@ class MainActivity : AppCompatActivity() {
         //switch the computer level
         radioGroup.setOnCheckedChangeListener { _, _ ->
             if (radio_one.isChecked) {
-                computerAI.compLvl = 1
+                computerAI.compLvl = maxComputerLvl-2
             } else if (radio_two.isChecked) {
-                computerAI.compLvl = 2
+                computerAI.compLvl = maxComputerLvl-1
             } else {
-                computerAI.compLvl = 3
+                computerAI.compLvl = maxComputerLvl
             }
         }
 
@@ -500,6 +553,16 @@ class MainActivity : AppCompatActivity() {
                 button_play.imageTintList = ColorStateList.valueOf(Color.parseColor("#ffff8800"))
                 textGameInfo.text = game.turnColor.toString() + " turn"
             }
+        }
+
+        
+        button_theme.setOnClickListener {
+            if (isDarkTheme){
+                theme(false)
+            } else {
+               theme(true)
+            }
+
         }
     }
 }

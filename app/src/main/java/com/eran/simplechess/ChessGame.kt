@@ -5,7 +5,7 @@ import kotlin.math.abs
 
 class ChessGame {
     var board1d = Array(64){ChessSquare()}
-    var board2d = arrayOf<Array<ChessSquare>>()
+    var board2d = Array(8){Array(8){ChessSquare()} }
     var moveHistory = arrayOf<Array<ChessSquare>>()
     var moveHistoryPointer:Int = 0
     var turnColor = PieceColor.White
@@ -35,34 +35,31 @@ class ChessGame {
 
     // fill board2d array with elements
     private fun board1dToBoard2d(){
-        board2d = arrayOf()
         var n = 0
         for (i in 0..7)
         {
-            var array = arrayOf<ChessSquare>()
             for (j in 0..7) {
-                array += board1d[n]
+                board2d[i][j]=board1d[n]
                 n++
             }
-            board2d += array
         }
     }
 
 
-    fun switchTurnColor(){
-        if (turnColor== PieceColor.White){
-            turnColor= PieceColor.Black
+    private fun switchTurnColor(){
+        turnColor = if (turnColor== PieceColor.White){
+            PieceColor.Black
         }else{
-            turnColor=PieceColor.White
+            PieceColor.White
         }
     }
 
 
     fun otherColor(color: PieceColor): PieceColor{
-        if (color == PieceColor.White){
-            return  PieceColor.Black
+        return if (color == PieceColor.White){
+            PieceColor.Black
         }else{
-            return  PieceColor.White
+            PieceColor.White
         }
     }
 
@@ -230,7 +227,7 @@ class ChessGame {
 
 
     fun isDraw(color: PieceColor): Boolean{
-        var tempHistory = moveHistory.copyOf()
+        val tempHistory = moveHistory.copyOf()
         if (color == PieceColor.Black){
             for (piece in blackPieces.toList()){
                 for (move in possibleMoves(piece)){
@@ -281,7 +278,7 @@ class ChessGame {
 
 
     fun isDoingCheckmate(color: PieceColor): Boolean{
-        var tempHistory = moveHistory.copyOf()
+        val tempHistory = moveHistory.copyOf()
         val pieces = if (color ==PieceColor.Black) {
             whitePieces
         }else{
@@ -305,7 +302,7 @@ class ChessGame {
 
 
     //return an array of legal moves for a given piece
-    fun possibleMoves(index: Int): IntArray {
+    fun possibleMoves(index: Int): MutableList<Int> {
         val color = board1d[index].pieceColor
 
         val oppositeColor = if (color == PieceColor.White) {
@@ -752,7 +749,7 @@ class ChessGame {
                 }
             }
         }
-        return possibleMoves.toIntArray()
+        return possibleMoves
     }
 
 
