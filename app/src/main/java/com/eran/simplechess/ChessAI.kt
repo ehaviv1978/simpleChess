@@ -33,6 +33,7 @@ class ChessAI (private val game: ChessGame, colorAI: PieceColor, var compLvl: In
         return computerMove
     }
 
+
     // calculate board score
     private fun boardScore(): Int {
         var score = 0
@@ -100,6 +101,8 @@ class ChessAI (private val game: ChessGame, colorAI: PieceColor, var compLvl: In
                 game.moveBack()
             }
         }
+        if (bestMoveScore == 99999 && depth == compLvl && !game.isDoingCheck(PieceColor.Black)) return 0;//Computer try to avoid Draw move
+
         return bestMoveScore
     }
 }
