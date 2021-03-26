@@ -314,13 +314,16 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 } else {
+                    val tempHistory = game.moveHistory.toList()
                     if (game.isDraw(PieceColor.White)) {
                         lockBoard()
+                        game.moveHistory = tempHistory.toTypedArray()
                         textGameInfo.text = "Draw!!"
                         if (sound_switch.isChecked) {
                             mpDraw.start()
                         }
                     } else {
+                        game.moveHistory = tempHistory.toTypedArray()
                         textGameInfo.text = "White Turn"
                     }
                 }
@@ -389,14 +392,17 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 } else {
+                    val tempHistory = game.moveHistory.toList()
                     if (game.isDraw(game.turnColor)) {
                         lockBoard()
+                        game.moveHistory = tempHistory.toTypedArray()
                         textGameInfo.text = "Draw!!"
                         if (sound_switch.isChecked) {
                             mpDraw.start()
                         }
                         return
                     }
+                    game.moveHistory = tempHistory.toTypedArray()
                     textGameInfo.text = game.turnColor.toString() + " Turn"
                 }
                 if (vsSwitch.isChecked && game.turnColor == computerColor) {

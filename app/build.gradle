@@ -11,8 +11,8 @@ android {
         applicationId "com.eran.simplechess"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 20
-        versionName "3.0"
+        versionCode 21
+        versionName "3.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

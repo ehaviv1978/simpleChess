@@ -226,39 +226,6 @@ class ChessGame {
     }
 
 
-    fun isDraw(color: PieceColor): Boolean{
-        val tempHistory = moveHistory.copyOf()
-        if (color == PieceColor.Black){
-            for (piece in blackPieces.toList()){
-                for (move in possibleMoves(piece)){
-                    makeMove(piece,move)
-                    if (!isDoingCheck(PieceColor.White)) {
-                        moveBack()
-                        moveHistory=tempHistory.copyOf()
-                        return false
-                    }
-                    moveBack()
-                }
-            }
-            moveHistory=tempHistory.copyOf()
-            return true
-        }else{
-            for (piece in whitePieces.toList()){
-                for (move in possibleMoves(piece)){
-                    makeMove(piece,move)
-                    if (!isDoingCheck(PieceColor.Black)) {
-                        moveBack()
-                        moveHistory=tempHistory.copyOf()
-                        return false
-                    }
-                    moveBack()
-                }
-            }
-            moveHistory=tempHistory.copyOf()
-            return true
-        }
-    }
-
     fun isDoingCheck(color: PieceColor): Boolean{
         if (color == PieceColor.Black){
             for (piece in whitePieces) {
@@ -278,27 +245,26 @@ class ChessGame {
 
 
     fun isDoingCheckmate(color: PieceColor): Boolean{
-        val tempHistory = moveHistory.copyOf()
-        val pieces = if (color ==PieceColor.Black) {
-            whitePieces
-        }else{
-            blackPieces
-        }
+        val pieces = if (color ==PieceColor.Black) whitePieces else blackPieces
 
         for (piece in pieces.toList()) {
             for (move in possibleMoves(piece)) {
                 makeMove(piece, move)
                 if (!isDoingCheck(color)) {
                     moveBack()
-                    moveHistory=tempHistory.copyOf()
                     return false
                 }
                 moveBack()
             }
         }
-        moveHistory=tempHistory.copyOf()
         return true
     }
+
+
+    fun isDraw(color: PieceColor): Boolean {
+        return isDoingCheckmate(otherColor(color))
+    }
+
 
 
     //return an array of legal moves for a given piece
